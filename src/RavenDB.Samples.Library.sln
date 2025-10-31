@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenDB.Samples.Library.App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenDB.Samples.Library.ServiceDefaults", "RavenDB.Samples.Library.ServiceDefaults\RavenDB.Samples.Library.ServiceDefaults.csproj", "{7B6C3B59-974E-4B97-94DF-4ED06B793E86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Catalogue.App", "RavenDB.Samples.Library.Catalogue.App\RavenDB.Samples.Library.Catalogue.App.csproj", "{726BFA9A-A5F5-4CEE-953C-E54202383662}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.App", "RavenDB.Samples.Library.App\RavenDB.Samples.Library.App.csproj", "{726BFA9A-A5F5-4CEE-953C-E54202383662}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

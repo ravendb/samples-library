@@ -6,6 +6,7 @@
         <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>RavenDB.Samples.Library.App</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

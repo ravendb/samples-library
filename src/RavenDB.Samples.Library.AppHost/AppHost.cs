@@ -16,7 +16,7 @@ var storage = builder.AddAzureStorage("storage")
 var queues = storage.AddQueues("queues");
 
 // Catalogue
-builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_Catalogue_App>("catalogue")
+builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithHostStorage(storage)
     .WithReference(queues);
 

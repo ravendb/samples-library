@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RavenDB.Samples.Library.Catalogue.App\RavenDB.Samples.Library.Catalogue.App.csproj" />
+    <ProjectReference Include="..\RavenDB.Samples.Library.App\RavenDB.Samples.Library.App.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace RavenDB.Samples.Library.Catalogue.App.Model;
+﻿namespace RavenDB.Samples.Library.App.Model;
 
 public class Author
 {
