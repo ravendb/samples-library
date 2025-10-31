@@ -4,7 +4,7 @@
 
 ## Overview
 
-A simple library management application. Built with [RavenDB](https://ravendb.net), Aspire and Azure Functions.
+A simple library management application. Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev) and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
 
 <img width="950" height="590" alt="screenshot" src="https://github.com/user-attachments/assets/108cbb63-e937-4b40-9cb0-28123fc93125" />
 
@@ -22,9 +22,9 @@ We do clean the environment from time to time.
 
 The following RavenDB features are used to build the application:
 
-1. [Vector Search](https://docs.ravendb.net/7.1/ai-integration/vector-search/ravendb-as-vector-database) - RavenDB has a built-in vector database. It's used for searching across similar books.
-1. [Document Refresh](https://docs.ravendb.net/7.1/studio/database/settings/document-refresh) - a scheduled update of selected documents is used to inform users about the book copies that should be returned.
-1. [Azure Storage Queues ETL](https://docs.ravendb.net/7.1/server/ongoing-tasks/etl/queue-etl/azure-queue) - Azure Storage Queues integration is used to inform about the potential book copies to be returned.
+1. [Vector Search](https://docs.ravendb.net/7.1/ai-integration/vector-search/ravendb-as-vector-database) - used for searching across similar books.
+1. [Document Refresh](https://docs.ravendb.net/7.1/studio/database/settings/document-refresh) - used for timeouts handling for book copies that should be returned.
+1. [Azure Storage Queues ETL](https://docs.ravendb.net/7.1/server/ongoing-tasks/etl/queue-etl/azure-queue) - used to inform about the potential book copies to be returned
 
 ## Technologies
 
