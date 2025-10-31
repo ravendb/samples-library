@@ -1,21 +1,20 @@
-# Yet Another Sample App (YASA)
+# Raven Library
 
 ![Build](https://github.com/ravendb/sample-blueprint/actions/workflows/build.yml/badge.svg)
 
 ## Overview
 
-A sample application providing a simple online shop expierience. It leverages [RavenDB](https://ravendb.net) database as its core database.
+A simple library management application. Built with [RavenDB](https://ravendb.net), Aspire and Azure Functions.
 
 <img width="950" height="590" alt="screenshot" src="https://github.com/user-attachments/assets/108cbb63-e937-4b40-9cb0-28123fc93125" />
-
 
 ## Live Demo
 
 A live hosted version of this application can be found here:
 
-**[https://yasa.samples.ravendb.net](https://yasa.samples.ravendb.net)**
+**[https://library.samples.ravendb.net](https://library.samples.ravendb.net)**
 
-Please bear in mind, this application, for sake of simplicity of the deployment, is deployed in XYZ region. This can impact the latency you perceive. (remove if not applicable).
+Please bear in mind, this application, for sake of simplicity of the deployment, is deployed in Americas region. This can impact the latency you perceive.
 
 We do clean the environment from time to time.
 
@@ -23,19 +22,17 @@ We do clean the environment from time to time.
 
 The following RavenDB features are used to build the application:
 
-1. [Vector Search](https://docs.ravendb.net/7.1/ai-integration/vector-search/ravendb-as-vector-database) - RavenDB has a built-in vector database 
-1. [Document Refresh](https://docs.ravendb.net/7.1/studio/database/settings/document-refresh) - a scheduled update of selected documents
-1. [Azure Storage Queues ETL](https://docs.ravendb.net/7.1/server/ongoing-tasks/etl/queue-etl/azure-queue) - Azure Storage Queues integration
+1. [Vector Search](https://docs.ravendb.net/7.1/ai-integration/vector-search/ravendb-as-vector-database) - RavenDB has a built-in vector database. It's used for searching across similar books.
+1. [Document Refresh](https://docs.ravendb.net/7.1/studio/database/settings/document-refresh) - a scheduled update of selected documents is used to inform users about the book copies that should be returned.
+1. [Azure Storage Queues ETL](https://docs.ravendb.net/7.1/server/ongoing-tasks/etl/queue-etl/azure-queue) - Azure Storage Queues integration is used to inform about the potential book copies to be returned.
 
 ## Technologies
 
 The following technogies were used to build this application:
 
-1. RavenDB 7.1
-1. .NET 8
-1. Node.js 22
-1. ASP.NET Core 8
-1. Angular 14
+1. RavenDB 6.2
+1. .NET 9
+1. Aspire
 
 ## Run locally
 
@@ -43,9 +40,9 @@ If you want to run the application locally, please follow the steps:
 
 1. Check out the GIT repository
 1. Install prerequisites:
-   1. [.NET 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-   1. [Node.js 22.x](https://nodejs.org/en/download)
-1. Get the app running by ...
+   1. [.NET 9.x](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+   1. [Aspire.dev](https://aspire.dev/get-started/install-cli/)
+1. Get the app running by opening `/scr/RavenDB.Samples.Library.sln` and starting the `Aspire` `AppHost` project
 
 ## Community & Support
 
