@@ -8,6 +8,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RavenDB.Samples.Library.Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.App", "RavenDB.Samples.Library.App\RavenDB.Samples.Library.App.csproj", "{726BFA9A-A5F5-4CEE-953C-E54202383662}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Migrations", "RavenDB.Samples.Library.Migrations\RavenDB.Samples.Library.Migrations.csproj", "{572E5BEC-8163-4FEC-ACF0-9F5A1FD2B0D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Model", "RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj", "{14135ACF-F87E-4282-9F06-674C62EF18E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,14 @@ Global
 		{726BFA9A-A5F5-4CEE-953C-E54202383662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{726BFA9A-A5F5-4CEE-953C-E54202383662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{726BFA9A-A5F5-4CEE-953C-E54202383662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572E5BEC-8163-4FEC-ACF0-9F5A1FD2B0D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572E5BEC-8163-4FEC-ACF0-9F5A1FD2B0D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572E5BEC-8163-4FEC-ACF0-9F5A1FD2B0D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572E5BEC-8163-4FEC-ACF0-9F5A1FD2B0D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14135ACF-F87E-4282-9F06-674C62EF18E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14135ACF-F87E-4282-9F06-674C62EF18E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14135ACF-F87E-4282-9F06-674C62EF18E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14135ACF-F87E-4282-9F06-674C62EF18E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

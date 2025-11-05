@@ -1,4 +1,4 @@
-﻿namespace RavenDB.Samples.Library.App.Model;
+﻿namespace RavenDB.Samples.Library.Model;
 
 public class Book
 {

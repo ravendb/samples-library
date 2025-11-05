@@ -1,4 +1,4 @@
-﻿namespace RavenDB.Samples.Library.App.Model;
+﻿namespace RavenDB.Samples.Library.Model;
 
 /// <summary>
 /// A copy of a <see cref="Book"/> that is of a given <see cref="BookEdition"/>.

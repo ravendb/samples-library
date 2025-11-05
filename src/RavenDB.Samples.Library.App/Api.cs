@@ -2,18 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
+using RavenDB.Samples.Library.Model;
 
 namespace RavenDB.Samples.Library.App;
 
-public class Api
+public class Api(ILogger<Api> logger, IAsyncDocumentSession session)
 {
-    private readonly ILogger<Api> _logger;
-
-    public Api(ILogger<Api> logger)
-    {
-        _logger = logger;
-    }
-
     [Function(nameof(BooksGetById))]
     public IActionResult BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
     {
@@ -21,12 +17,12 @@ public class Api
     }
     
     [Function(nameof(BooksGet))]
-    public IActionResult BooksGet([HttpTrigger("get", Route = "books")] HttpRequest req)
+    public async Task<IActionResult> BooksGet([HttpTrigger("get", Route = "books")] HttpRequest req)
     {
-        return new JsonResult(new[]
-        {
-            new { Id = 1, Name = "Test" },
-            new { Id = 2, Name = "Test" }
-        });
+        var books = await session.Query<Book>()
+            .Take(10)
+            .ToArrayAsync();
+
+        return new JsonResult(books);
     }
 }
