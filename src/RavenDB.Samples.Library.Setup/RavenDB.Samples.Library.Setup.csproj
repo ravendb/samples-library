@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -8,12 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="RavenDB.Client" Version="7.1.3" />
-      <PackageReference Include="RavenMigrations" Version="6.0.2" />
+        <PackageReference Include="CsvHelper" Version="30.0.3" />
+        <PackageReference Include="RavenDB.Client" Version="7.1.3" />
+        <PackageReference Include="RavenMigrations" Version="6.0.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
+        <ProjectReference Include="..\RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\goodbooks\books.csv" Link="Data\books.csv" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>
