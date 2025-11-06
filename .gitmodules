@@ -1,0 +1,3 @@
+[submodule "goodbooks"]
+	path = goodbooks
+	url = https://github.com/zygmuntz/goodbooks-10k.git
