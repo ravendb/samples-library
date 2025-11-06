@@ -3,7 +3,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 // RavenDB
 // https://learn.microsoft.com/en-us/dotnet/aspire/community-toolkit/ravendb?tabs=dotnet-cli#hosting-integration
 var ravenDbServer = builder
-    .AddRavenDB("server")
+    .AddRavenDB("RavenDB")
     .WithDataVolume("ravendb-samples-library");
 
 var db = ravenDbServer
