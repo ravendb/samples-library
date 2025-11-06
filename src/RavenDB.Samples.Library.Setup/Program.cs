@@ -1,4 +1,6 @@
 ﻿using System.Data.Common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Raven.Client.Documents;
 using Raven.Migrations;
@@ -19,4 +21,13 @@ store.Database = database;
 
 store.Initialize();
 
-new MigrationRunner(store, new MigrationOptions(), NullLogger<MigrationRunner>.Instance).Run();
+// var logger = new ServiceCollection()
+//     .AddLogging((loggingBuilder) => loggingBuilder
+//         .SetMinimumLevel(LogLevel.Information)
+//         .AddConsole()
+//     )
+//     .BuildServiceProvider()
+//     .GetRequiredService<ILoggerFactory>()
+//     .CreateLogger<MigrationRunner>();
+//
+// new MigrationRunner(store, new MigrationOptions(), logger).Run();

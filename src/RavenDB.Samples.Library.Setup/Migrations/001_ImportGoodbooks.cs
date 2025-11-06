@@ -10,7 +10,7 @@ using RavenDB.Samples.Library.Model;
 namespace RavenDB.Samples.Library.Setup.Migrations;
 
 [Migration(1)]
-public sealed class ImportGoodbooks : Migration
+public sealed class ImportGoodBooks : Migration
 {
     public override void Up()
     {
@@ -18,7 +18,7 @@ public sealed class ImportGoodbooks : Migration
 
         if (!File.Exists(booksCsvPath))
         {
-            throw new FileNotFoundException("Unable to locate the Goodbooks dataset.", booksCsvPath);
+            throw new FileNotFoundException("Unable to locate the GoodBooks dataset.", booksCsvPath);
         }
 
         var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -34,7 +34,7 @@ public sealed class ImportGoodbooks : Migration
 
         if (!csv.Read() || !csv.ReadHeader())
         {
-            throw new InvalidOperationException("The Goodbooks dataset does not contain a header row.");
+            throw new InvalidOperationException("The GoodBooks dataset does not contain a header row.");
         }
 
         var authorsByName = new Dictionary<string, Author>(StringComparer.OrdinalIgnoreCase);
@@ -43,8 +43,12 @@ public sealed class ImportGoodbooks : Migration
 
         using var bulkInsert = DocumentStore.BulkInsert();
 
-        while (csv.Read())
+        var toImport = 20;
+        
+        while (toImport > 0 && csv.Read())
         {
+            toImport--;
+            
             var goodreadsBookId = csv.GetField<long>("goodreads_book_id");
             var bestBookId = csv.GetField<long>("best_book_id");
             var workId = csv.GetField<long>("work_id");
