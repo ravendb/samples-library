@@ -1,16 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj" />
-      <ProjectReference Include="..\RavenDB.Samples.Library.ServiceDefaults\RavenDB.Samples.Library.ServiceDefaults.csproj" />
-    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="RavenDB.Client" Version="7.1.3" />

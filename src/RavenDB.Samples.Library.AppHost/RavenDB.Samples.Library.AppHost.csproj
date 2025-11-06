@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RavenDB.Samples.Library.App\RavenDB.Samples.Library.App.csproj" />
-    <ProjectReference Include="..\RavenDB.Samples.Library.Migrations\RavenDB.Samples.Library.Migrations.csproj" />
+    <ProjectReference Include="..\RavenDB.Samples.Library.Setup\RavenDB.Samples.Library.Setup.csproj" />
   </ItemGroup>
 
 </Project>

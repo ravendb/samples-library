@@ -1,5 +1,3 @@
-using CommunityToolkit.Aspire.Hosting.RavenDB;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 // RavenDB
@@ -11,8 +9,8 @@ var ravenDbServer = builder
 var db = ravenDbServer
     .AddDatabase("library");
  
-// Migrations
-var migrations = builder.AddProject<Projects.RavenDB_Samples_Library_Migrations>("migrations")
+// Setup project, including migrations
+var setup = builder.AddProject<Projects.RavenDB_Samples_Library_Setup>("setup")
     .WithReference(db)
     .WaitFor(db);
 
@@ -27,6 +25,6 @@ builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithReference(queues)
     .WithReference(db)
     .WaitFor(db)
-    .WaitForCompletion(migrations);
+    .WaitForCompletion(setup);
 
 builder.Build().Run();

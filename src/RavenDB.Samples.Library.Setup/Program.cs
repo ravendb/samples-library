@@ -1,4 +1,4 @@
-using System.Data.Common;
+﻿using System.Data.Common;
 using Microsoft.Extensions.Logging.Abstractions;
 using Raven.Client.Documents;
 using Raven.Migrations;
