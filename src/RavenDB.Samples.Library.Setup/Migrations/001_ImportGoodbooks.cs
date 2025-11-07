@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.Extensions.Logging;
 using Raven.Client.Documents.BulkInsert;
 using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Queries;
@@ -14,12 +18,13 @@ public sealed class ImportGoodBooks : Migration
 {
     public override void Up()
     {
-        var booksCsvPath = Path.Combine(AppContext.BaseDirectory, "Data", "books.csv");
+        this.Logger.LogInformation("Starting up database");
 
-        if (!File.Exists(booksCsvPath))
-        {
-            throw new FileNotFoundException("Unable to locate the GoodBooks dataset.", booksCsvPath);
-        }
+        var asm = typeof(ImportGoodBooks).Assembly;
+        var name = asm.GetManifestResourceNames().Single(name => name.Contains("books.csv"));
+        using var stream = asm.GetManifestResourceStream(name);
+
+        var booksCsvPath = Path.Combine(AppContext.BaseDirectory, "Data", "books.csv");
 
         var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -27,22 +32,21 @@ public sealed class ImportGoodBooks : Migration
             MissingFieldFound = null,
             TrimOptions = TrimOptions.Trim
         };
-
-        using var stream = File.OpenRead(booksCsvPath);
-        using var reader = new StreamReader(stream);
+        
+        using var reader = new StreamReader(stream!);
         using var csv = new CsvReader(reader, csvConfiguration);
-
+        
         if (!csv.Read() || !csv.ReadHeader())
         {
             throw new InvalidOperationException("The GoodBooks dataset does not contain a header row.");
         }
-
+        
         var authorsByName = new Dictionary<string, Author>(StringComparer.OrdinalIgnoreCase);
         var nextAuthorId = 1;
         var random = new Random(42);
-
+        
         using var bulkInsert = DocumentStore.BulkInsert();
-
+        
         var toImport = 20;
         
         while (toImport > 0 && csv.Read())
@@ -60,22 +64,22 @@ public sealed class ImportGoodBooks : Migration
             var languageCode = csv.GetField("language_code");
             var imageUrl = csv.GetField("image_url");
             var smallImageUrl = csv.GetField("small_image_url");
-
+        
             var authorFullName = ExtractPrimaryAuthor(authorsRaw);
             var author = GetOrCreateAuthor(authorFullName, authorsByName, ref nextAuthorId, bulkInsert);
-
+        
             var bookId = $"books/{workId}";
             var bookTitle = string.IsNullOrWhiteSpace(title) ? $"Book #{workId}" : title;
-
+        
             var book = new Book
             {
                 Id = bookId,
                 Title = bookTitle,
                 AuthorId = author.Id
             };
-
+        
             bulkInsert.Store(book);
-
+        
             var edition = new BookEdition
             {
                 Id = $"bookeditions/{goodreadsBookId}",
@@ -90,9 +94,9 @@ public sealed class ImportGoodBooks : Migration
                 ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl,
                 SmallImageUrl = string.IsNullOrWhiteSpace(smallImageUrl) ? null : smallImageUrl
             };
-
+        
             bulkInsert.Store(edition);
-
+        
             var copiesCount = random.Next(1, 6);
             for (var copyNumber = 1; copyNumber <= copiesCount; copyNumber++)
             {
@@ -101,7 +105,7 @@ public sealed class ImportGoodBooks : Migration
                     Id = $"bookcopies/{workId}-{copyNumber}",
                     BookEditionId = edition.Id
                 };
-
+        
                 bulkInsert.Store(copy);
             }
         }

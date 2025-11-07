@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
+using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
 
 namespace RavenDB.Samples.Library.App;
 
-public class Api(ILogger<Api> logger, IAsyncDocumentSession session)
+public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfiguration config, MigrationRunner migrations)
 {
     [Function(nameof(BooksGetById))]
     public IActionResult BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
@@ -24,5 +26,21 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session)
             .ToArrayAsync();
 
         return new JsonResult(books);
+    }
+
+    [Function(nameof(Migrate))]
+    public async Task<IActionResult> Migrate([HttpTrigger("post", Route = "migrate")] HttpRequest req)
+    {
+        var actual = req.Headers["X-Command-Key"];
+        var expected = config.GetValue<string>("CommandKey");
+
+        if (actual != expected)
+        {
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
+        }
+        
+        migrations.Run();
+        
+        return new StatusCodeResult(StatusCodes.Status202Accepted);
     }
 }

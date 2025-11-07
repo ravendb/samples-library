@@ -2,6 +2,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Raven.Migrations;
+using RavenDB.Samples.Library.Setup;
+using RavenDB.Samples.Library.Setup.Migrations;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -16,6 +19,10 @@ builder.AddRavenDBClient("library",
 
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
+    .ConfigureFunctionsApplicationInsights()
+    .AddRavenDbMigrations(migrations =>
+    {
+        migrations.Assemblies = [typeof(ImportGoodBooks).Assembly];
+    });
 
 builder.Build().Run();

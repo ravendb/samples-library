@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RavenDB.Samples.Library.App\RavenDB.Samples.Library.App.csproj" />
+    <ProjectReference Include="..\RavenDB.Samples.Library.ServiceDefaults\RavenDB.Samples.Library.ServiceDefaults.csproj" />
     <ProjectReference Include="..\RavenDB.Samples.Library.Setup\RavenDB.Samples.Library.Setup.csproj" />
   </ItemGroup>
 

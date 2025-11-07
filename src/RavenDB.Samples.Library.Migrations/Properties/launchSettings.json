@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "RavenDB.Samples.Library.Migrations": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7019",
-      "launchBrowser": false
-    }
-  }
-}

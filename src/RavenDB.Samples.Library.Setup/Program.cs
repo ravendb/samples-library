@@ -1,9 +1,6 @@
-﻿using System.Data.Common;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using System;
+using System.Data.Common;
 using Raven.Client.Documents;
-using Raven.Migrations;
 
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__library");
 var connectionBuilder = new DbConnectionStringBuilder
@@ -30,4 +27,5 @@ store.Initialize();
 //     .GetRequiredService<ILoggerFactory>()
 //     .CreateLogger<MigrationRunner>();
 //
-// new MigrationRunner(store, new MigrationOptions(), logger).Run();
+
+// new MigrationRunner(store, new MigrationOptions(), NullLogger<MigrationRunner>.Instance).Run();
