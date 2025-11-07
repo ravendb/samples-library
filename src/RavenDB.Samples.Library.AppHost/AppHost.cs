@@ -1,6 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-
 // RavenDB
 // https://learn.microsoft.com/en-us/dotnet/aspire/community-toolkit/ravendb?tabs=dotnet-cli#hosting-integration
 var ravenDbServer = builder
@@ -17,7 +16,9 @@ var storage = builder.AddAzureStorage("storage")
     .RunAsEmulator();
 var queues = storage.AddQueues("queues");
 
-var secretKey = builder.AddParameter("CommandKey", secret: true);
+const string commandKey = "CommandKey";
+
+var secretKey = builder.AddParameter(commandKey, secret: true);
 
 // Library App
 builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
@@ -25,7 +26,7 @@ builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithReference(queues)
     .WithReference(db)
     .WaitFor(db)
-    .WithEnvironment("CommandKey", secretKey)
+    .WithEnvironment(commandKey, secretKey)
     .WithHttpCommand(
         path: "/api/migrate",
         displayName: "Migrate DB",

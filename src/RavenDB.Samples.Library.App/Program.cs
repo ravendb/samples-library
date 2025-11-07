@@ -3,7 +3,6 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Raven.Migrations;
-using RavenDB.Samples.Library.Setup;
 using RavenDB.Samples.Library.Setup.Migrations;
 
 var builder = FunctionsApplication.CreateBuilder(args);

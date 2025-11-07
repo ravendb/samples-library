@@ -12,6 +12,9 @@ namespace RavenDB.Samples.Library.App;
 
 public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfiguration config, MigrationRunner migrations)
 {
+    public const string EnvVarAdminCommandKeyName = "CommandKey";
+    public const string HeaderAdminCommandKeyName = "X-Command-Key";
+
     [Function(nameof(BooksGetById))]
     public IActionResult BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
     {
@@ -31,8 +34,8 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     [Function(nameof(Migrate))]
     public async Task<IActionResult> Migrate([HttpTrigger("post", Route = "migrate")] HttpRequest req)
     {
-        var actual = req.Headers["X-Command-Key"];
-        var expected = config.GetValue<string>("CommandKey");
+        var actual = req.Headers[HeaderAdminCommandKeyName];
+        var expected = config.GetValue<string>(EnvVarAdminCommandKeyName);
 
         if (actual != expected)
         {
