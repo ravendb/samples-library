@@ -18,8 +18,6 @@ public sealed class ImportGoodBooks : Migration
 {
     public override void Up()
     {
-        this.Logger.LogInformation("Starting up database");
-
         var asm = typeof(ImportGoodBooks).Assembly;
         var name = asm.GetManifestResourceNames().Single(name => name.Contains("books.csv"));
         using var stream = asm.GetManifestResourceStream(name);
