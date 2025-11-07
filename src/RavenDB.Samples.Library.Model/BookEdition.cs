@@ -11,15 +11,7 @@ public class BookEdition
 
     public string Title { get; set; }
 
-    public long GoodreadsBookId { get; set; }
-
-    public long BestBookId { get; set; }
-
-    public int BooksCount { get; set; }
-
     public string? Isbn { get; set; }
-
-    public string? Isbn13 { get; set; }
 
     public string? LanguageCode { get; set; }
 

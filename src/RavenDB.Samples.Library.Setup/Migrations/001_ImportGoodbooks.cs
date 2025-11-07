@@ -46,19 +46,22 @@ public sealed class ImportGoodBooks : Migration
         var random = new Random(42);
         
         using var bulkInsert = DocumentStore.BulkInsert();
-        
-        var toImport = 20;
-        
-        while (toImport > 0 && csv.Read())
+
+        // ID prefixes
+        var conventions = DocumentStore.Conventions;
+        var collections = new
         {
-            toImport--;
-            
+            books = conventions.GetCollectionName(typeof(Book)),
+            authors = conventions.GetCollectionName(typeof(Author)),
+            editions = conventions.GetCollectionName(typeof(BookEdition)),
+            bookCopies = conventions.GetCollectionName(typeof(BookCopy))
+        };
+
+        while (csv.Read())
+        {
             var goodreadsBookId = csv.GetField<long>("goodreads_book_id");
-            var bestBookId = csv.GetField<long>("best_book_id");
             var workId = csv.GetField<long>("work_id");
-            var booksCount = csv.GetField<int>("books_count");
             var isbn = csv.GetField("isbn");
-            var isbn13 = csv.GetField("isbn13");
             var authorsRaw = csv.GetField("authors");
             var title = csv.GetField("title");
             var languageCode = csv.GetField("language_code");
@@ -66,14 +69,13 @@ public sealed class ImportGoodBooks : Migration
             var smallImageUrl = csv.GetField("small_image_url");
         
             var authorFullName = ExtractPrimaryAuthor(authorsRaw);
-            var author = GetOrCreateAuthor(authorFullName, authorsByName, ref nextAuthorId, bulkInsert);
-        
-            var bookId = $"books/{workId}";
+            var author = GetOrCreateAuthor(authorFullName, authorsByName, collections.authors, ref nextAuthorId, bulkInsert);
+
             var bookTitle = string.IsNullOrWhiteSpace(title) ? $"Book #{workId}" : title;
         
             var book = new Book
             {
-                Id = bookId,
+                Id = $"{collections.books}/{workId}",
                 Title = bookTitle,
                 AuthorId = author.Id
             };
@@ -82,14 +84,10 @@ public sealed class ImportGoodBooks : Migration
         
             var edition = new BookEdition
             {
-                Id = $"bookeditions/{goodreadsBookId}",
+                Id = $"{collections.editions}/{goodreadsBookId}",
                 BookId = book.Id,
                 Title = bookTitle,
-                GoodreadsBookId = goodreadsBookId,
-                BestBookId = bestBookId,
-                BooksCount = booksCount,
                 Isbn = string.IsNullOrWhiteSpace(isbn) ? null : isbn,
-                Isbn13 = string.IsNullOrWhiteSpace(isbn13) ? null : isbn13,
                 LanguageCode = string.IsNullOrWhiteSpace(languageCode) ? null : languageCode,
                 ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl,
                 SmallImageUrl = string.IsNullOrWhiteSpace(smallImageUrl) ? null : smallImageUrl
@@ -102,7 +100,7 @@ public sealed class ImportGoodBooks : Migration
             {
                 var copy = new BookCopy
                 {
-                    Id = $"bookcopies/{workId}-{copyNumber}",
+                    Id = $"{collections.bookCopies}/{workId}-{copyNumber}",
                     BookEditionId = edition.Id
                 };
         
@@ -122,6 +120,7 @@ public sealed class ImportGoodBooks : Migration
     private static Author GetOrCreateAuthor(
         string fullName,
         IDictionary<string, Author> authorsByName,
+        string collectionName,
         ref int nextAuthorId,
         BulkInsertOperation bulkInsert)
     {
@@ -139,7 +138,7 @@ public sealed class ImportGoodBooks : Migration
 
         var author = new Author
         {
-            Id = $"authors/{nextAuthorId++}",
+            Id = $"{collectionName}/{nextAuthorId++}",
             FirstName = firstName,
             LastName = lastName
         };
