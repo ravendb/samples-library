@@ -12,8 +12,7 @@ var db = ravenDbServer
     .AddDatabase(dbName);
 
 // Storage
-var storage = builder.AddAzureStorage("storage")
-    .RunAsEmulator();
+var storage = builder.AddAzureStorage("storage").RunAsEmulator();
 var queues = storage.AddQueues("queues");
 
 const string commandKey = "CommandKey";
@@ -42,5 +41,11 @@ builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
             IconName = "databaseArrowUp",
             IsHighlighted = true
         });
+
+// Frontend
+builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Frontend", "dev")
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
 
 builder.Build().Run();
