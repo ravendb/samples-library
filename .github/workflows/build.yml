@@ -2,7 +2,7 @@ name: Build
 
 env:
   NODE_VERSION: '22.x'
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '10.0.x'
 
 on:
   workflow_dispatch:
@@ -26,6 +26,8 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - run: dotnet build .\src\RavenDB.Samples.Library.sln
 
   frontend:
     runs-on: ubuntu-latest
