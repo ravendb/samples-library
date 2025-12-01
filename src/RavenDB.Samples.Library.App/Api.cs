@@ -28,7 +28,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var offset = 0;
         if (req.Query.TryGetValue("offset", out var offsetValue) && int.TryParse(offsetValue, out var parsedOffset))
         {
-            offset = parsedOffset;
+            offset = Math.Clamp(parsedOffset, 0, 10000);
         }
 
         var query = req.Query.TryGetValue("query", out var queryValue) ? queryValue.ToString() : null;
