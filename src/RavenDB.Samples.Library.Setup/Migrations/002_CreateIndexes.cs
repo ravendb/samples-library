@@ -5,7 +5,7 @@ using RavenDB.Samples.Library.Model;
 namespace RavenDB.Samples.Library.Setup.Migrations;
 
 [Migration(2)]
-public sealed class CreateBooksSearchIndex : Migration
+public sealed class CreateIndexes : Migration
 {
     public override void Up()
     {
