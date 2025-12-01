@@ -7,6 +7,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
+using RavenDB.Samples.Library.Setup.Migrations;
 
 namespace RavenDB.Samples.Library.App;
 
@@ -24,7 +25,27 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     [Function(nameof(BooksGet))]
     public async Task<IActionResult> BooksGet([HttpTrigger("get", Route = "books")] HttpRequest req)
     {
-        var books = await session.Query<Book>()
+        var offset = 0;
+        if (req.Query.TryGetValue("offset", out var offsetValue) && int.TryParse(offsetValue, out var parsedOffset))
+        {
+            offset = parsedOffset;
+        }
+
+        var query = req.Query.TryGetValue("query", out var queryValue) ? queryValue.ToString() : null;
+
+        IQueryable<Book> booksQuery;
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            booksQuery = session.Query<Book, Books_Search>()
+                .Search(b => b.Title, query);
+        }
+        else
+        {
+            booksQuery = session.Query<Book>();
+        }
+
+        var books = await booksQuery
+            .Skip(offset)
             .Take(10)
             .ToArrayAsync();
 
