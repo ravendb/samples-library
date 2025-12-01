@@ -20,7 +20,7 @@ const string commandKey = "CommandKey";
 var secretKey = builder.AddParameter(commandKey, secret: true);
 
 // Library App
-builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
+var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithHostStorage(storage)
     .WithReference(queues)
     .WithReference(db)
@@ -43,7 +43,8 @@ builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
         });
 
 // Frontend
-builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Frontend", "dev")
+var frontend = builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Frontend", "dev")
+    .WithReference(functions)
     .WithEnvironment("BROWSER", "none")
     .WithHttpEndpoint(env: "VITE_PORT")
     .WithExternalHttpEndpoints()
