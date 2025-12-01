@@ -7,7 +7,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
-using RavenDB.Samples.Library.Setup.Migrations;
+using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.App;
 

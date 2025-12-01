@@ -1,6 +1,6 @@
 using Raven.Client.Documents.Indexes;
 using Raven.Migrations;
-using RavenDB.Samples.Library.Model;
+using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.Setup.Migrations;
 
@@ -16,19 +16,5 @@ public sealed class CreateIndexes : Migration
     {
         DocumentStore.Maintenance.Send(
             new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new Books_Search().IndexName));
-    }
-}
-
-public class Books_Search : AbstractIndexCreationTask<Book>
-{
-    public Books_Search()
-    {
-        Map = books => from book in books
-            select new
-            {
-                book.Title
-            };
-
-        Indexes.Add(x => x.Title, FieldIndexing.Search);
     }
 }
