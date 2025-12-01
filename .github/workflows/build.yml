@@ -22,17 +22,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - run: dotnet build .\src\RavenDB.Samples.Library.sln
+      - run: dotnet build src/RavenDB.Samples.Library.sln
 
   frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       
       - uses: actions/setup-node@v6
         with:
