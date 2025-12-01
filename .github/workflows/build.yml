@@ -27,7 +27,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - run: dotnet build .\src\RavenDB.Samples.Library.sln
+      - run: dotnet build src/RavenDB.Samples.Library.sln
 
   frontend:
     runs-on: ubuntu-latest
