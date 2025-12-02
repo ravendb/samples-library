@@ -1,5 +1,4 @@
-import { apiUrl } from '$lib/api';
-import { getUserId } from '$lib/utils/userId';
+import { callApi } from '$lib/api';
 
 export interface Book {
 	id: string;
@@ -17,17 +16,5 @@ export interface UserProfile {
  * @returns The user profile including borrowed books
  */
 export async function getUserProfile(): Promise<UserProfile> {
-	const userId = getUserId();
-
-	const response = await fetch(apiUrl('/user/profile'), {
-		headers: {
-			'X-User-Id': userId
-		}
-	});
-
-	if (!response.ok) {
-		throw new Error(`Failed to fetch user profile: ${response.status}`);
-	}
-
-	return response.json();
+	return callApi<UserProfile>('/user/profile');
 }

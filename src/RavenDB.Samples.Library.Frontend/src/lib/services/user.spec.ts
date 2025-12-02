@@ -26,7 +26,7 @@ describe('user service', () => {
 	});
 
 	describe('getUserProfile', () => {
-		it('should fetch user profile with correct headers', async () => {
+		it('should fetch user profile from correct endpoint', async () => {
 			const mockResponse = {
 				id: 'Users/test-user-id',
 				borrowed: [{ id: 'book-1', title: 'Test Book', authorId: 'author-1' }]
@@ -42,9 +42,9 @@ describe('user service', () => {
 			expect(mockFetch).toHaveBeenCalledWith(
 				expect.stringContaining('/api/user/profile'),
 				expect.objectContaining({
-					headers: {
+					headers: expect.objectContaining({
 						'X-User-Id': 'test-user-id'
-					}
+					})
 				})
 			);
 			expect(result).toEqual(mockResponse);
@@ -56,7 +56,7 @@ describe('user service', () => {
 				status: 401
 			});
 
-			await expect(getUserProfile()).rejects.toThrow('Failed to fetch user profile: 401');
+			await expect(getUserProfile()).rejects.toThrow('API error: 401');
 		});
 	});
 });
