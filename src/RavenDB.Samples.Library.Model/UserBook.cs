@@ -18,6 +18,11 @@ public class UserBook
     public string BookCopyId { get; set; }
 
     /// <summary>
+    /// The book that was borrowed.
+    /// </summary>
+    public string BookId { get; set; }
+
+    /// <summary>
     /// The date when the book was borrowed.
     /// </summary>
     public DateTime Borrowed { get; set; }

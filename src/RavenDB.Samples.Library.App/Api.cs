@@ -57,17 +57,17 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         }
         
         var borrowedBooks = await session.Query<UserBook, BorrowedBooks_ByUserId>()
-            .Include(x => x.BookCopyId)
+            .Include(x => x.BookId)
             .Where(x => x.UserId == userId)
             .ToArrayAsync();
 
-        var bookCopyIds = borrowedBooks.Select(x => x.BookCopyId).ToArray();
-        var bookCopies = await session.LoadAsync<BookCopy>(bookCopyIds);
+        var bookIds = borrowedBooks.Select(x => x.BookId).ToArray();
+        var books = await session.LoadAsync<Book>(bookIds);
 
         return new JsonResult(new
         {
-            id = user.Id,
-            borrowed = bookCopies.Values.ToArray()
+            Id = user.Id,
+            Borrowed = books.Values.ToArray()
         });
     }
 

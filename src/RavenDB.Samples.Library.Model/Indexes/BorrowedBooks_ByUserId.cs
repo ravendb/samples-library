@@ -11,7 +11,8 @@ public class BorrowedBooks_ByUserId : AbstractIndexCreationTask<UserBook>
             select new
             {
                 userBook.UserId,
-                userBook.BookCopyId
+                userBook.BookCopyId,
+                userBook.BookId
             };
     }
 }
