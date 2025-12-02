@@ -30,7 +30,7 @@
 	<div class="topbar-content">
 		<div class="topbar-left">
 			<a href={resolve('/')} class="logo">
-				<span class="logo-text">📚 Library</span>
+				<span class="logo-text">📚 Library of Ravens</span>
 			</a>
 
 			<button
