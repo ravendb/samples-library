@@ -30,7 +30,9 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 
         var booksQuery = string.IsNullOrWhiteSpace(query)
             ? session.Query<Book>()
-            : session.Query<Book, Books_Search>().Search(b => b.Title, query);
+            : session.Query<Global_Search.Result, Global_Search>()
+                .Search(r => r.Query, query)
+                .OfType<Book>();
 
         var books = await booksQuery
             .Skip(offset)
