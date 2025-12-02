@@ -1,7 +1,9 @@
 /**
- * API configuration module for managing API endpoint URLs.
+ * API configuration module for managing API endpoint URLs and calls.
  * Uses the BASE_API_HTTP environment variable to determine the base URL.
  */
+
+import { getUserId } from '$lib/utils/userId';
 
 /**
  * The base URL for API calls.
@@ -20,4 +22,29 @@ export function apiUrl(route: string, baseUrl: string = API_BASE_URL): string {
 	const normalizedBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 	const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
 	return `${normalizedBase}/api${normalizedRoute}`;
+}
+
+/**
+ * Makes an API call with automatic user header injection, error handling, and JSON decoding.
+ * @param route - The API route (e.g., '/user/profile')
+ * @param options - Optional fetch options (method, body, etc.)
+ * @returns The decoded JSON response
+ * @throws Error if the response is not ok
+ */
+export async function callApi<T>(route: string, options?: RequestInit): Promise<T> {
+	const userId = getUserId();
+
+	const response = await fetch(apiUrl(route), {
+		...options,
+		headers: {
+			'X-User-Id': userId,
+			...options?.headers
+		}
+	});
+
+	if (!response.ok) {
+		throw new Error(`API error: ${response.status}`);
+	}
+
+	return response.json();
 }

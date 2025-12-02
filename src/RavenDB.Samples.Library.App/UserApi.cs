@@ -13,7 +13,7 @@ public class UserApi(IAsyncDocumentSession session)
     public const string HeaderUserIdName = "X-User-Id";
 
     [Function(nameof(UserGet))]
-    public async Task<IActionResult> UserGet([HttpTrigger("get", Route = "users")] HttpRequest req)
+    public async Task<IActionResult> UserGet([HttpTrigger("get", Route = "user/profile")] HttpRequest req)
     {
         if (!TryGetUserId(req, out var userId))
         {
