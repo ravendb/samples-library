@@ -49,6 +49,7 @@ var frontend = builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Fronten
     .WithEnvironment("APP_HTTP", functions.GetEndpoint("http"))
     .WithHttpEndpoint(env: "VITE_PORT")
     .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+    .PublishAsDockerFile()
+    .WaitFor(functions);    
 
 builder.Build().Run();
