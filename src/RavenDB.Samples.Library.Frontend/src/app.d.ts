@@ -11,7 +11,7 @@ declare global {
 
 	// Extend ImportMetaEnv interface for Vite environment variables
 	interface ImportMetaEnv {
-		readonly VITE_APP_HTTP: string;
+		readonly BASE_API_HTTP: string;
 	}
 }
 

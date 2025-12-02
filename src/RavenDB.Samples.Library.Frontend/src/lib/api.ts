@@ -1,6 +1,6 @@
 /**
  * API configuration module for managing API endpoint URLs.
- * Uses the VITE_APP_HTTP environment variable to determine the base URL.
+ * Uses the BASE_API_HTTP environment variable to determine the base URL.
  */
 
 /**
@@ -8,7 +8,7 @@
  * This is the APP_HTTP environment variable value.
  * Falls back to empty string if not set (for relative URLs in same-origin scenarios).
  */
-export const API_BASE_URL: string = import.meta.env.VITE_APP_HTTP ?? '';
+export const API_BASE_URL: string = import.meta.env.BASE_API_HTTP ?? '';
 
 /**
  * Builds a full API URL from the given route.

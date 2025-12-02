@@ -27,7 +27,7 @@ describe('api.ts', () => {
 
 		it('should use API_BASE_URL by default', () => {
 			// This tests the default behavior using the actual env variable
-			// In test environment, VITE_APP_HTTP is empty string
+			// In test environment, BASE_API_HTTP is empty string
 			expect(apiUrl('/books')).toBe(`${API_BASE_URL}/api/books`);
 		});
 	});
