@@ -9,12 +9,12 @@ public sealed class CreateIndexes : Migration
 {
     public override void Up()
     {
-        new Global_Search().Execute(DocumentStore);
+        new GlobalSearchIndex().Execute(DocumentStore);
     }
 
     public override void Down()
     {
         DocumentStore.Maintenance.Send(
-            new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new Global_Search().IndexName));
+            new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new GlobalSearchIndex().IndexName));
     }
 }

@@ -2,7 +2,7 @@ using Raven.Client.Documents.Indexes;
 
 namespace RavenDB.Samples.Library.Model.Indexes;
 
-public class Global_Search : AbstractMultiMapIndexCreationTask<Global_Search.Result>
+public class GlobalSearchIndex : AbstractMultiMapIndexCreationTask<GlobalSearchIndex.Result>
 {
     public class Result
     {
@@ -10,7 +10,7 @@ public class Global_Search : AbstractMultiMapIndexCreationTask<Global_Search.Res
         public string Query { get; set; }
     }
 
-    public Global_Search()
+    public GlobalSearchIndex()
     {
         AddMap<Book>(books => from book in books
             select new Result

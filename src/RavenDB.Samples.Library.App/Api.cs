@@ -22,24 +22,24 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         return new JsonResult(new { Id = id, Name = "Test" });
     }
     
-    [Function(nameof(BooksGet))]
-    public async Task<IActionResult> BooksGet([HttpTrigger("get", Route = "books")] HttpRequest req)
+    [Function(nameof(Search))]
+    public async Task<IActionResult> Search([HttpTrigger("get", Route = "search")] HttpRequest req)
     {
         var offset = req.GetQueryInt("offset", 0, 0, 10000);
         var query = req.GetQueryString("query");
 
-        var booksQuery = string.IsNullOrWhiteSpace(query)
-            ? session.Query<Book>()
-            : session.Query<Global_Search.Result, Global_Search>()
-                .Search(r => r.Query, query)
-                .OfType<Book>();
+        var queryable = session.Query<GlobalSearchIndex.Result, GlobalSearchIndex>();
+        if (!string.IsNullOrEmpty(query))
+        {
+            queryable = queryable.Search(r => r.Query, query);
+        }
 
-        var books = await booksQuery
+        var results = await queryable
             .Skip(offset)
             .Take(10)
             .ToArrayAsync();
 
-        return new JsonResult(books);
+        return new JsonResult(results);
     }
 
     [Function(nameof(UsersGetById))]
