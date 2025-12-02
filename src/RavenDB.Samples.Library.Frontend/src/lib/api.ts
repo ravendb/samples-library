@@ -17,6 +17,7 @@ export const API_BASE_URL: string = import.meta.env.VITE_APP_HTTP ?? '';
  * @returns The full API URL (e.g., 'http://localhost:5000/api/books')
  */
 export function apiUrl(route: string, baseUrl: string = API_BASE_URL): string {
+	const normalizedBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 	const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
-	return `${baseUrl}/api${normalizedRoute}`;
+	return `${normalizedBase}/api${normalizedRoute}`;
 }

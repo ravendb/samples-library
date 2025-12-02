@@ -21,6 +21,10 @@ describe('api.ts', () => {
 			expect(apiUrl('/books', '')).toBe('/api/books');
 		});
 
+		it('should handle trailing slash in base URL', () => {
+			expect(apiUrl('/books', 'http://localhost:5000/')).toBe('http://localhost:5000/api/books');
+		});
+
 		it('should use API_BASE_URL by default', () => {
 			// This tests the default behavior using the actual env variable
 			// In test environment, VITE_APP_HTTP is empty string
