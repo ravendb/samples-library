@@ -2,4 +2,4 @@
 export { apiUrl, API_BASE_URL } from './api';
 export { getUserId, getUserAvatarUrl } from './utils/userId';
 export { searchBooksAndAuthors, type SearchResult } from './services/search';
-
+export { getUserProfile, type UserProfile, type Book } from './services/user';
