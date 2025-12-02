@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
 		},
 		define: {
 			// Expose APP_HTTP as BASE_API_HTTP for client-side access
-			'import.meta.env.BASE_API_HTTP': JSON.stringify(process.env.APP_HTTP ?? '')
+			_BASE_API_HTTP_: JSON.stringify(process.env.APP_HTTP ?? '')
 		},
 		test: {
 			expect: { requireAssertions: true },

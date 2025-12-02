@@ -10,7 +10,7 @@ import { getUserId } from '$lib/utils/userId';
  * This is the APP_HTTP environment variable value.
  * Falls back to empty string if not set (for relative URLs in same-origin scenarios).
  */
-export const API_BASE_URL: string = import.meta.env.BASE_API_HTTP ?? '';
+export const API_BASE_URL: string = _BASE_API_HTTP_ ?? '';
 
 /**
  * Builds a full API URL from the given route.
