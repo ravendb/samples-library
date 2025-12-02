@@ -1,8 +1,9 @@
 namespace RavenDB.Samples.Library.Model;
 
-public class Book
+public class Book : IRoot
 {
     public string Id { get; set; }
+    public static string BuildId(string value) => $"Books/{value}";
 
     public string Title { get; set; }
 

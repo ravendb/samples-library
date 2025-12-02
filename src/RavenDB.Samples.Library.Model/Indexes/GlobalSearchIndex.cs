@@ -27,5 +27,6 @@ public class GlobalSearchIndex : AbstractMultiMapIndexCreationTask<GlobalSearchI
             });
 
         Index(x => x.Query, FieldIndexing.Search);
+        Store(x => x.Query, FieldStorage.Yes);
     }
 }

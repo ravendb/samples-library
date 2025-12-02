@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Raven.Migrations;
+using RavenDB.Samples.Library.Model;
 using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.App;
@@ -14,20 +15,30 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 {
     public const string EnvVarAdminCommandKeyName = "CommandKey";
     public const string HeaderAdminCommandKeyName = "X-Command-Key";
-
-    [Function(nameof(BooksGetById))]
-    public IActionResult BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
-    {
-        return new JsonResult(new { Id = id, Name = "Test" });
-    }
     
+    [Function(nameof(BooksGetById))]
+    public Task<IActionResult> BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id) => Get<Book>(id);
+    
+    [Function(nameof(AuthorsGetById))]
+    public Task<IActionResult> AuthorsGetById([HttpTrigger("get", Route = "authors/{id}")] HttpRequest req, string id) => Get<Author>(id);
+
+    private async Task<IActionResult> Get<TEntity>(string id)
+        where TEntity : IRoot
+    {
+        var root = await session.LoadAsync<TEntity>(TEntity.BuildId(id));
+        return root == null ? new NotFoundResult() : new JsonResult(root);
+    }
+
     [Function(nameof(Search))]
     public async Task<IActionResult> Search([HttpTrigger("get", Route = "search")] HttpRequest req)
     {
         var offset = req.GetQueryInt("offset", 0, 0, 10000);
         var query = req.GetQueryString("query");
 
-        var queryable = session.Query<GlobalSearchIndex.Result, GlobalSearchIndex>();
+        var queryable = session
+            .Query<GlobalSearchIndex.Result, GlobalSearchIndex>()
+            .Include(r => r.Id);
+        
         if (!string.IsNullOrEmpty(query))
         {
             queryable = queryable.Search(r => r.Query, query);

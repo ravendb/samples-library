@@ -1,6 +1,6 @@
 namespace RavenDB.Samples.Library.Model;
 
-public class User
+public class User : IRoot
 {
     public string Id { get; set; }
 
