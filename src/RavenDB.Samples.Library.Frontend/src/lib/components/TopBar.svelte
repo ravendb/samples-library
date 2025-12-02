@@ -28,24 +28,26 @@
 
 <header class="topbar">
 	<div class="topbar-content">
-		<a href={resolve('/')} class="logo">
-			<span class="logo-text">📚 Library</span>
-		</a>
+		<div class="topbar-left">
+			<a href={resolve('/')} class="logo">
+				<span class="logo-text">📚 Library</span>
+			</a>
 
-		<button
-			class="search-trigger"
-			onclick={() => (searchOpen = true)}
-			aria-label="Open search dialog"
-		>
-			<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-				<circle cx="11" cy="11" r="8" />
-				<path d="M21 21l-4.35-4.35" />
-			</svg>
-			<span class="search-placeholder">Search...</span>
-			<kbd class="kbd">{isMac ? '⌘' : 'Ctrl'}+K</kbd>
-		</button>
+			<button
+				class="search-trigger"
+				onclick={() => (searchOpen = true)}
+				aria-label="Open search dialog"
+			>
+				<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+					<circle cx="11" cy="11" r="8" />
+					<path d="M21 21l-4.35-4.35" />
+				</svg>
+				<span class="search-placeholder">Search...</span>
+				<kbd class="kbd">{isMac ? '⌘' : 'Ctrl'}+K</kbd>
+			</button>
+		</div>
 
-		<nav class="nav">
+		<nav class="topbar-right">
 			<a href={resolve('/profile')} class="user-link">
 				{#if avatarUrl}
 					<img src={avatarUrl} alt="User avatar" class="user-avatar" />
@@ -74,7 +76,18 @@
 		padding: 12px 24px;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+	}
+
+	.topbar-left {
+		display: flex;
+		align-items: center;
 		gap: 24px;
+	}
+
+	.topbar-right {
+		display: flex;
+		align-items: center;
 	}
 
 	.logo {
@@ -88,8 +101,7 @@
 	}
 
 	.search-trigger {
-		flex: 1;
-		max-width: 480px;
+		width: 320px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -128,11 +140,6 @@
 		font-size: 12px;
 		color: #6b7280;
 		font-family: monospace;
-	}
-
-	.nav {
-		display: flex;
-		align-items: center;
 	}
 
 	.user-link {
