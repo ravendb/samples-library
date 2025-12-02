@@ -13,6 +13,9 @@ declare global {
 	interface ImportMetaEnv {
 		readonly BASE_API_HTTP: string;
 	}
+
+	// Vite define constants
+	const _BASE_API_HTTP_: string | undefined;
 }
 
 export {};
