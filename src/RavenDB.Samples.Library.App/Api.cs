@@ -42,6 +42,35 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         return new JsonResult(books);
     }
 
+    [Function(nameof(UsersGetById))]
+    public async Task<IActionResult> UsersGetById([HttpTrigger("get", Route = "users/{id}")] HttpRequest req, string id)
+    {
+        var userId = $"Users/{id}";
+        
+        var user = await session.LoadAsync<User>(userId);
+        
+        if (user == null)
+        {
+            user = new User { Id = userId };
+            await session.StoreAsync(user);
+            await session.SaveChangesAsync();
+        }
+        
+        var borrowedBooks = await session.Query<UserBook, BorrowedBooks_ByUserId>()
+            .Include(x => x.BookCopyId)
+            .Where(x => x.UserId == userId)
+            .ToArrayAsync();
+
+        var bookCopyIds = borrowedBooks.Select(x => x.BookCopyId).ToArray();
+        var bookCopies = await session.LoadAsync<BookCopy>(bookCopyIds);
+
+        return new JsonResult(new
+        {
+            id = user.Id,
+            borrowed = bookCopies.Values.ToArray()
+        });
+    }
+
     [Function(nameof(Migrate))]
     public async Task<IActionResult> Migrate([HttpTrigger("post", Route = "migrate")] HttpRequest req)
     {
