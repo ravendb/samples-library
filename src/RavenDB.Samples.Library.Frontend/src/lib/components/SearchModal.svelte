@@ -54,8 +54,15 @@
 </script>
 
 {#if isOpen}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="search-modal-backdrop" onclick={handleBackdropClick} onkeydown={handleKeydown}>
+	<div
+		class="search-modal-backdrop"
+		onclick={handleBackdropClick}
+		onkeydown={handleKeydown}
+		role="dialog"
+		aria-modal="true"
+		aria-label="Search"
+		tabindex="-1"
+	>
 		<div class="search-modal">
 			<div class="search-input-wrapper">
 				<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -66,6 +73,7 @@
 					bind:this={inputRef}
 					type="text"
 					placeholder="Search books and authors..."
+					aria-label="Search books and authors"
 					bind:value={query}
 					oninput={handleInput}
 					class="search-input"
