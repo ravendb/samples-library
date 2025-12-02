@@ -29,7 +29,7 @@ public class UserApi(IAsyncDocumentSession session)
             await session.StoreAsync(user);
             await session.SaveChangesAsync();
 
-            // no books if just createds
+            // A user has no books, if it was just created.
             return GetProfile(user, []);
         }
         
