@@ -1,11 +1,3 @@
-<script lang="ts">
-	let imageError = $state(false);
-
-	function handleImageError() {
-		imageError = true;
-	}
-</script>
-
 <svelte:head>
 	<title>Home | Library of Ravens</title>
 </svelte:head>
@@ -13,16 +5,7 @@
 <div class="home-page">
 	<div class="hero-section">
 		<div class="hero-image-container">
-			{#if !imageError}
-				<img
-					src="/image.webp"
-					alt="A raven in a library"
-					class="hero-image"
-					onerror={handleImageError}
-				/>
-			{:else}
-				<div class="hero-image-placeholder">📚</div>
-			{/if}
+			<img src="/image.webp" alt="A Raven in a library" class="hero-image" />
 		</div>
 		<h1 class="hero-title">Library of Ravens</h1>
 		<p class="hero-description">
@@ -63,15 +46,6 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-	}
-
-	.hero-image-placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 64px;
 	}
 
 	.hero-title {
