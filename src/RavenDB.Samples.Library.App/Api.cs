@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Raven.Migrations;
-using RavenDB.Samples.Library.Model;
 using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.App;
@@ -40,35 +39,6 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
             .ToArrayAsync();
 
         return new JsonResult(results);
-    }
-
-    [Function(nameof(UsersGetById))]
-    public async Task<IActionResult> UsersGetById([HttpTrigger("get", Route = "users/{id}")] HttpRequest req, string id)
-    {
-        var userId = $"Users/{id}";
-        
-        var user = await session.LoadAsync<User>(userId);
-        
-        if (user == null)
-        {
-            user = new User { Id = userId };
-            await session.StoreAsync(user);
-            await session.SaveChangesAsync();
-        }
-        
-        var borrowedBooks = await session.Query<UserBook, BorrowedBooks_ByUserId>()
-            .Include(x => x.BookId)
-            .Where(x => x.UserId == userId)
-            .ToArrayAsync();
-
-        var bookIds = borrowedBooks.Select(x => x.BookId).ToArray();
-        var books = await session.LoadAsync<Book>(bookIds);
-
-        return new JsonResult(new
-        {
-            Id = user.Id,
-            Borrowed = books.Values.ToArray()
-        });
     }
 
     [Function(nameof(Migrate))]
