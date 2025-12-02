@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using RavenDB.Samples.Library.Model;
@@ -9,7 +8,7 @@ using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.App;
 
-public class UserApi(ILogger<UserApi> logger, IAsyncDocumentSession session)
+public class UserApi(IAsyncDocumentSession session)
 {
     public const string HeaderUserIdName = "X-User-Id";
 
@@ -50,8 +49,14 @@ public class UserApi(ILogger<UserApi> logger, IAsyncDocumentSession session)
         if (req.Headers.TryGetValue(HeaderUserIdName, out var headerValue) && 
             !string.IsNullOrWhiteSpace(headerValue))
         {
-            userId = $"Users/{headerValue}";
-            return true;
+            var value = headerValue.ToString().Trim();
+            
+            // Validate that the header value contains only safe characters
+            if (value.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_'))
+            {
+                userId = $"Users/{value}";
+                return true;
+            }
         }
 
         userId = string.Empty;
