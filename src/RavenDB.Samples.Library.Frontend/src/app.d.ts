@@ -8,6 +8,11 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	// Extend ImportMetaEnv interface for Vite environment variables
+	interface ImportMetaEnv {
+		readonly VITE_APP_HTTP: string;
+	}
 }
 
 export {};
