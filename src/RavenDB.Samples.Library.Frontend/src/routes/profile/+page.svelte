@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-	<title>Profile | Library</title>
+	<title>Profile | Library of Ravens</title>
 </svelte:head>
 
 <div class="profile-page">
