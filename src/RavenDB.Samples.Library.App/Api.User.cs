@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -27,9 +28,12 @@ public class UserApi(IAsyncDocumentSession session)
             user = new User { Id = userId };
             await session.StoreAsync(user);
             await session.SaveChangesAsync();
+
+            // no books if just createds
+            return GetProfile(user, []);
         }
         
-        var borrowedBooks = await session.Query<UserBook, BorrowedBooksByUserId>()
+        var borrowedBooks = await session.Query<UserBook, BorrowedBooksByUserIdIndex>()
             .Include(x => x.BookId)
             .Where(x => x.UserId == userId)
             .ToArrayAsync();
@@ -37,14 +41,19 @@ public class UserApi(IAsyncDocumentSession session)
         var bookIds = borrowedBooks.Select(x => x.BookId).ToArray();
         var books = await session.LoadAsync<Book>(bookIds);
 
+        return GetProfile(user, books.Values);
+    }
+
+    private static JsonResult GetProfile(User user, IEnumerable<Book> books)
+    {
         return new JsonResult(new
         {
             Id = user.Id,
-            Borrowed = books.Values.ToArray()
+            Borrowed = books.ToArray()
         });
     }
 
-    private static bool TryGetUserId(HttpRequest req, out string userId)
+    private static bool TryGetUserId(HttpRequest req, [MaybeNullWhen(false)] out string userId)
     {
         if (req.Headers.TryGetValue(HeaderUserIdName, out var headerValue) && 
             !string.IsNullOrWhiteSpace(headerValue))
@@ -54,12 +63,12 @@ public class UserApi(IAsyncDocumentSession session)
             // Validate that the header value contains only safe characters
             if (value.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_'))
             {
-                userId = $"Users/{value}";
+                userId = User.BuildId(value);
                 return true;
             }
         }
 
-        userId = string.Empty;
+        userId = null;
         return false;
     }
 }
