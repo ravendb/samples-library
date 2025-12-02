@@ -2,9 +2,9 @@ using Raven.Client.Documents.Indexes;
 
 namespace RavenDB.Samples.Library.Model.Indexes;
 
-public class BorrowedBooks_ByUserId : AbstractIndexCreationTask<UserBook>
+public class BorrowedBooksByUserId : AbstractIndexCreationTask<UserBook>
 {
-    public BorrowedBooks_ByUserId()
+    public BorrowedBooksByUserId()
     {
         Map = userBooks => from userBook in userBooks
             where userBook.Returned == null

@@ -8,12 +8,12 @@ public sealed class CreateBorrowedBooksIndex : Migration
 {
     public override void Up()
     {
-        new BorrowedBooks_ByUserId().Execute(DocumentStore);
+        new BorrowedBooksByUserId().Execute(DocumentStore);
     }
 
     public override void Down()
     {
         DocumentStore.Maintenance.Send(
-            new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new BorrowedBooks_ByUserId().IndexName));
+            new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new BorrowedBooksByUserId().IndexName));
     }
 }

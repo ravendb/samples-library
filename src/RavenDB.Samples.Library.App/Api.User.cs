@@ -29,7 +29,7 @@ public class UserApi(IAsyncDocumentSession session)
             await session.SaveChangesAsync();
         }
         
-        var borrowedBooks = await session.Query<UserBook, BorrowedBooks_ByUserId>()
+        var borrowedBooks = await session.Query<UserBook, BorrowedBooksByUserId>()
             .Include(x => x.BookId)
             .Where(x => x.UserId == userId)
             .ToArrayAsync();
