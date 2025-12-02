@@ -1,17 +1,17 @@
 import { defineConfig, loadEnv } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 
-export default defineConfig(( { mode }) => {
+export default defineConfig(({ mode }) => {
 	// load env, including VITE_PORT passed by Aspire
 	const env = loadEnv(mode, process.cwd(), '');
-	
+
 	return {
 		plugins: [sveltekit()],
 		server: {
-			port: parseInt(env.VITE_PORT),
+			port: parseInt(env.VITE_PORT)
 		},
 		test: {
-			expect: {requireAssertions: true},
+			expect: { requireAssertions: true },
 			projects: [
 				{
 					extends: './vite.config.ts',
@@ -21,7 +21,7 @@ export default defineConfig(( { mode }) => {
 						browser: {
 							enabled: true,
 							provider: 'playwright',
-							instances: [{browser: 'chromium'}]
+							instances: [{ browser: 'chromium' }]
 						},
 						include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
 						exclude: ['src/lib/server/**'],
@@ -39,5 +39,5 @@ export default defineConfig(( { mode }) => {
 				}
 			]
 		}
-	}
+	};
 });
