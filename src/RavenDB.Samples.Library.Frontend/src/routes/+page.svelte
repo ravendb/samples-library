@@ -1,3 +1,7 @@
+<script lang="ts">
+	import image from '$lib/assets/image.webp';
+</script>
+
 <svelte:head>
 	<title>Home | Library of Ravens</title>
 </svelte:head>
@@ -5,7 +9,7 @@
 <div class="home-page">
 	<div class="hero-section">
 		<div class="hero-image-container">
-			<img src="/image.webp" alt="A Raven in a library" class="hero-image" />
+			<img src="{image}" alt="A Raven in a library" class="hero-image" />
 		</div>
 		<h1 class="hero-title">Library of Ravens</h1>
 		<p class="hero-description">
