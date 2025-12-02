@@ -46,6 +46,7 @@ var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Librar
 var frontend = builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Frontend", "dev")
     .WithReference(functions)
     .WithEnvironment("BROWSER", "none")
+    .WithEnvironment("APP_HTTP", functions.GetEndpoint("http"))
     .WithHttpEndpoint(env: "VITE_PORT")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
