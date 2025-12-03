@@ -118,8 +118,8 @@
 	}
 
 	.search-modal {
-		background: white;
-		border-radius: 12px;
+		background: var(--color-white);
+		border-radius: var(--radius-lg);
 		width: 100%;
 		max-width: 560px;
 		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -129,16 +129,16 @@
 	.search-input-wrapper {
 		display: flex;
 		align-items: center;
-		padding: 16px;
-		border-bottom: 1px solid #e5e7eb;
-		gap: 12px;
+		padding: var(--spacing-4);
+		border-bottom: 1px solid var(--color-gray-200);
+		gap: var(--spacing-3);
 	}
 
 	.search-icon {
 		width: 20px;
 		height: 20px;
 		stroke-width: 2;
-		color: #9ca3af;
+		color: var(--color-gray-400);
 		flex-shrink: 0;
 	}
 
@@ -146,21 +146,21 @@
 		flex: 1;
 		border: none;
 		outline: none;
-		font-size: 16px;
+		font-size: var(--font-size-base);
 		background: transparent;
 	}
 
 	.search-input::placeholder {
-		color: #9ca3af;
+		color: var(--color-gray-400);
 	}
 
 	.kbd {
-		background: #f3f4f6;
-		border: 1px solid #e5e7eb;
-		border-radius: 4px;
+		background: var(--color-gray-100);
+		border: 1px solid var(--color-gray-200);
+		border-radius: var(--radius-sm);
 		padding: 2px 6px;
-		font-size: 12px;
-		color: #6b7280;
+		font-size: var(--font-size-xs);
+		color: var(--color-gray-500);
 		font-family: monospace;
 	}
 
@@ -172,23 +172,23 @@
 	.search-result-item {
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		padding: 12px 16px;
+		gap: var(--spacing-3);
+		padding: var(--spacing-3) var(--spacing-4);
 		text-decoration: none;
 		color: inherit;
 		transition: background-color 0.15s;
 	}
 
 	.search-result-item:hover {
-		background: #f3f4f6;
+		background: var(--color-gray-100);
 	}
 
 	.result-image {
 		width: 40px;
 		height: 40px;
-		border-radius: 8px;
+		border-radius: var(--radius-md);
 		object-fit: cover;
-		background: #f3f4f6;
+		background: var(--color-gray-100);
 	}
 
 	.result-info {
@@ -199,20 +199,20 @@
 
 	.result-name {
 		font-weight: 500;
-		color: #111827;
+		color: var(--color-gray-900);
 	}
 
 	.result-type {
-		font-size: 12px;
-		color: #6b7280;
+		font-size: var(--font-size-xs);
+		color: var(--color-gray-500);
 		text-transform: capitalize;
 	}
 
 	.search-loading,
 	.search-no-results,
 	.search-hint {
-		padding: 24px;
+		padding: var(--spacing-6);
 		text-align: center;
-		color: #6b7280;
+		color: var(--color-gray-500);
 	}
 </style>

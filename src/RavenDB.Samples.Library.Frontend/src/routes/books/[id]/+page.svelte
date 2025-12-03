@@ -31,44 +31,44 @@
 	>
 </svelte:head>
 
-<div class="book-page">
+<div class="page-container">
 	{#if loading}
-		<div class="loading-card">
+		<div class="card card-centered loading-state">
 			<p>Loading...</p>
 		</div>
 	{:else if notFound}
-		<div class="not-found-card">
+		<div class="card card-centered not-found-state">
 			<h1>Book Not Found</h1>
 			<p>The book you're looking for doesn't exist or has been removed.</p>
-			<a href={resolve('/')} class="back-link">← Back to Home</a>
+			<a href={resolve('/')} class="link-primary">← Back to Home</a>
 		</div>
 	{:else if error}
-		<div class="error-card">
+		<div class="card card-centered error-state">
 			<h1>Error</h1>
 			<p>{error}</p>
-			<a href={resolve('/')} class="back-link">← Back to Home</a>
+			<a href={resolve('/')} class="link-primary">← Back to Home</a>
 		</div>
 	{:else if book}
-		<div class="book-card">
+		<div class="card book-card">
 			<div class="book-cover">
 				<img
 					src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
 					alt="Book cover"
-					class="cover-image"
+					class="image-cover"
 				/>
 			</div>
 			<div class="book-info">
-				<h1>{book.title}</h1>
-				<p class="book-meta">
-					<span class="label">ID:</span>
-					<span class="value">{book.id}</span>
+				<h1 class="heading-primary">{book.title}</h1>
+				<p class="meta-row">
+					<span class="meta-label">ID:</span>
+					<span class="meta-value">{book.id}</span>
 				</p>
 				{#if book.authorId}
-					<p class="book-meta">
-						<span class="label">Author:</span>
+					<p class="meta-row">
+						<span class="meta-label">Author:</span>
 						<a
 							href={resolve(`/authors/${book.authorId.replace('Authors/', '')}`)}
-							class="author-link">{book.authorId}</a
+							class="link-primary">{book.authorId}</a
 						>
 					</p>
 				{/if}
@@ -78,112 +78,21 @@
 </div>
 
 <style>
-	.book-page {
-		max-width: 600px;
-		margin: 0 auto;
-		padding: 40px 24px;
-	}
-
-	.loading-card,
-	.not-found-card,
-	.error-card,
-	.book-card {
-		padding: 24px;
-		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 12px;
-	}
-
-	.loading-card {
-		text-align: center;
-		color: #6b7280;
-	}
-
-	.not-found-card,
-	.error-card {
-		text-align: center;
-	}
-
-	.not-found-card h1,
-	.error-card h1 {
-		margin-bottom: 12px;
-		font-size: 24px;
-		font-weight: 600;
-		color: #111827;
-	}
-
-	.not-found-card p,
-	.error-card p {
-		margin-bottom: 24px;
-		color: #6b7280;
-	}
-
-	.error-card p {
-		color: #dc2626;
-	}
-
-	.back-link {
-		display: inline-block;
-		color: #2563eb;
-		text-decoration: none;
-	}
-
-	.back-link:hover {
-		text-decoration: underline;
-	}
-
 	.book-card {
 		display: flex;
-		gap: 24px;
+		gap: var(--spacing-6);
 	}
 
 	.book-cover {
 		flex-shrink: 0;
 		width: 120px;
 		height: 160px;
-		background: #f3f4f6;
-		border-radius: 8px;
+		background: var(--color-gray-100);
+		border-radius: var(--radius-md);
 		overflow: hidden;
-	}
-
-	.cover-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
 	}
 
 	.book-info {
 		flex: 1;
-	}
-
-	.book-info h1 {
-		margin-bottom: 16px;
-		font-size: 24px;
-		font-weight: 600;
-		color: #111827;
-	}
-
-	.book-meta {
-		margin-bottom: 8px;
-		font-size: 14px;
-	}
-
-	.label {
-		color: #6b7280;
-		margin-right: 8px;
-	}
-
-	.value {
-		font-family: monospace;
-		color: #111827;
-	}
-
-	.author-link {
-		color: #2563eb;
-		text-decoration: none;
-	}
-
-	.author-link:hover {
-		text-decoration: underline;
 	}
 </style>
