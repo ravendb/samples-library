@@ -123,15 +123,15 @@
 	}
 
 	.books-list {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-4);
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--spacing-3);
 	}
 
 	.book-item {
 		display: flex;
-		gap: var(--spacing-4);
-		align-items: center;
+		flex-direction: column;
+		gap: var(--spacing-2);
 		padding: var(--spacing-3);
 		border: 1px solid var(--color-gray-200);
 		border-radius: var(--radius-md);
@@ -146,9 +146,8 @@
 	}
 
 	.book-cover-small {
-		flex-shrink: 0;
-		width: 60px;
-		height: 80px;
+		width: 100%;
+		aspect-ratio: 3 / 4;
 		background: var(--color-gray-100);
 		border-radius: var(--radius-sm);
 		overflow: hidden;
@@ -159,9 +158,16 @@
 	}
 
 	.book-title {
-		font-size: var(--font-size-base);
+		font-size: var(--font-size-sm);
 		font-weight: 500;
 		color: var(--color-gray-900);
 		margin: 0;
+		line-height: 1.4;
+	}
+
+	@media (max-width: 480px) {
+		.books-list {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
