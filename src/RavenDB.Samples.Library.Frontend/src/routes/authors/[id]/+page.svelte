@@ -124,7 +124,7 @@
 
 	.books-list {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(4, 1fr);
 		gap: var(--spacing-3);
 	}
 
@@ -137,7 +137,9 @@
 		border-radius: var(--radius-md);
 		text-decoration: none;
 		color: inherit;
-		transition: background-color 0.2s, border-color 0.2s;
+		transition:
+			background-color 0.2s,
+			border-color 0.2s;
 	}
 
 	.book-item:hover {
@@ -165,7 +167,13 @@
 		line-height: 1.4;
 	}
 
-	@media (max-width: 480px) {
+	@media (max-width: 799px) {
+		.books-list {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 479px) {
 		.books-list {
 			grid-template-columns: 1fr;
 		}
