@@ -2,25 +2,35 @@ import { callApi } from '$lib/api';
 
 export interface SearchResult {
 	id: string;
-	type: 'book' | 'author';
+	type: string;
 	name: string;
 	imageUrl: string;
 	link: string;
 }
 
 interface ApiSearchResult {
-	Id: string;
-	Query: string;
+	id: string;
+	query: string;
 }
 
-function transformApiResult(apiResult: ApiSearchResult): SearchResult {
-	const id = apiResult.Id;
-	const isBook = id.startsWith('Books/');
-	const type: 'book' | 'author' = isBook ? 'book' : 'author';
+function transformApiResult(result: ApiSearchResult): SearchResult {
+	const id = result.id;
 	const seed = encodeURIComponent(id);
-	const imageUrl = isBook
-		? `https://api.dicebear.com/9.x/shapes/svg?seed=${seed}`
-		: `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+	const prefix = id.slice(0, id.indexOf("/"));
+	let type: string = "";
+	let imageUrl: string = "";
+
+	switch (prefix)
+	{
+		case "Books":
+			type = "book";
+			imageUrl = `https://api.dicebear.com/9.x/shapes/svg?seed=${seed}`;
+			break;
+		case "Authors":
+			type = "author";
+			imageUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+			break;
+	}
 
 	// Convert "Books/123" to "/books/123" or "Authors/123" to "/authors/123"
 	const link = '/' + id.toLowerCase();
@@ -28,7 +38,7 @@ function transformApiResult(apiResult: ApiSearchResult): SearchResult {
 	return {
 		id,
 		type,
-		name: apiResult.Query,
+		name: result.query,
 		imageUrl,
 		link
 	};
