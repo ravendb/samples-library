@@ -8,6 +8,7 @@
 	let results = $state<SearchResult[]>([]);
 	let loading = $state(false);
 	let inputRef: HTMLInputElement | undefined = $state();
+	let selectedIndex = $state(-1);
 
 	let debounceTimer: ReturnType<typeof setTimeout>;
 
@@ -18,8 +19,10 @@
 				loading = true;
 				results = await searchBooksAndAuthors(query);
 				loading = false;
+				selectedIndex = -1; // Reset selection when results change
 			} else {
 				results = [];
+				selectedIndex = -1;
 			}
 		}, 200);
 	}
@@ -28,6 +31,7 @@
 		isOpen = false;
 		query = '';
 		results = [];
+		selectedIndex = -1;
 	}
 
 	function handleBackdropClick(e: MouseEvent) {
@@ -39,6 +43,22 @@
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			close();
+		} else if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			if (results.length > 0) {
+				selectedIndex = selectedIndex < results.length - 1 ? selectedIndex + 1 : 0;
+			}
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			if (results.length > 0) {
+				selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : results.length - 1;
+			}
+		} else if (e.key === 'Enter') {
+			e.preventDefault();
+			if (selectedIndex >= 0 && selectedIndex < results.length) {
+				const selectedResult = results[selectedIndex];
+				window.location.href = resolveLink(selectedResult.link);
+			}
 		}
 	}
 
@@ -78,16 +98,25 @@
 					oninput={handleInput}
 					class="search-input"
 				/>
-				<kbd class="kbd">ESC</kbd>
+				<div class="kbd-hints">
+					<kbd class="kbd">↑↓</kbd>
+					<kbd class="kbd">↵</kbd>
+					<kbd class="kbd">ESC</kbd>
+				</div>
 			</div>
 
 			<div class="search-results">
 				{#if loading}
 					<div class="search-loading">Searching...</div>
 				{:else if results.length > 0}
-					{#each results as result (result.id)}
+					{#each results as result, index (result.id)}
 						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-						<a href={resolveLink(result.link)} class="search-result-item" onclick={close}>
+						<a 
+							href={resolveLink(result.link)} 
+							class="search-result-item"
+							class:selected={index === selectedIndex}
+							onclick={close}
+						>
 							<img src={result.imageUrl} alt={result.name} class="result-image" />
 							<div class="result-info">
 								<span class="result-name">{result.name}</span>
@@ -164,6 +193,11 @@
 		font-family: monospace;
 	}
 
+	.kbd-hints {
+		display: flex;
+		gap: var(--spacing-2);
+	}
+
 	.search-results {
 		max-height: 400px;
 		overflow-y: auto;
@@ -181,6 +215,12 @@
 
 	.search-result-item:hover {
 		background: var(--color-gray-100);
+	}
+
+	.search-result-item.selected {
+		background: var(--color-gray-200);
+		border-left: 3px solid var(--color-gray-500);
+		padding-left: calc(var(--spacing-4) - 3px);
 	}
 
 	.result-image {
