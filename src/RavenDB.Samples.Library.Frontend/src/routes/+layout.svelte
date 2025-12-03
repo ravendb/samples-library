@@ -1,13 +1,19 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import fav16 from '$lib/assets/favicon-16x16.png';
+	import fav32 from '$lib/assets/favicon-32x32.png';
+	import favApple from '$lib/assets/apple-touch-icon.png';
+	import manifest from '$lib/assets/site.webmanifest';
 	import TopBar from '$lib/components/TopBar.svelte';
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="apple-touch-icon" sizes="180x180" href="{favApple}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{fav32}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{fav16}">
+	<link rel="manifest" href="{manifest}">
 </svelte:head>
 
 <TopBar />
