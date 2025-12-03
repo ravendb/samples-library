@@ -147,4 +147,5 @@
 .avatar-round {
 	border-radius: var(--radius-full);
 	background: var(--color-gray-100);
+	overflow: hidden;
 }
