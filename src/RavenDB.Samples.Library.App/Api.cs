@@ -71,8 +71,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var query = req.GetQueryString("query");
 
         var queryable = session
-            .Query<GlobalSearchIndex.Result, GlobalSearchIndex>()
-            .Include(r => r.Id);
+            .Query<GlobalSearchIndex.Result, GlobalSearchIndex>();
 
         if (!string.IsNullOrEmpty(query))
         {
@@ -81,11 +80,11 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 
         var results = await queryable
             .Statistics(out var stats) // Extract statistics to use it for caching
+            .ProjectInto<GlobalSearchIndex.Result>() // We need to inform Raven, what fields we want to project to. This does it for all the type properties
             .Skip(offset)
             .Take(10)
             .ToArrayAsync();
 
-        //return new JsonResult(results);
         return req.TryCachePublicly(new JsonResult(results), stats);
     }
 
