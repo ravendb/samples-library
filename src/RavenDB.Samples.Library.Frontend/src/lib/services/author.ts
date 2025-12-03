@@ -1,9 +1,15 @@
 import { callApi } from '$lib/api';
 
+export interface AuthorBook {
+	id: string;
+	title: string;
+}
+
 export interface Author {
 	id: string;
 	firstName: string;
 	lastName: string;
+	books?: AuthorBook[];
 }
 
 /**
