@@ -12,6 +12,12 @@
 	onMount(async () => {
 		const id = page.params.id;
 
+		if (!id) {
+			notFound = true;
+			loading = false;
+			return;
+		}
+
 		try {
 			author = await getAuthorById(id);
 		} catch (e) {
@@ -70,6 +76,28 @@
 				</p>
 			</div>
 		</div>
+
+		{#if author.books && author.books.length > 0}
+			<div class="card books-section">
+				<h2 class="heading-section">Books</h2>
+				<div class="books-list">
+					{#each author.books as book (book.id)}
+						<a href={resolve(`/books/${book.id.replace('Books/', '')}`)} class="book-item">
+							<div class="book-cover-small">
+								<img
+									src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
+									alt="Book cover for {book.title}"
+									class="image-cover"
+								/>
+							</div>
+							<div class="book-item-info">
+								<h3 class="book-title">{book.title}</h3>
+							</div>
+						</a>
+					{/each}
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>
 
@@ -88,5 +116,52 @@
 
 	.author-info {
 		flex: 1;
+	}
+
+	.books-section {
+		margin-top: var(--spacing-6);
+	}
+
+	.books-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-4);
+	}
+
+	.book-item {
+		display: flex;
+		gap: var(--spacing-4);
+		align-items: center;
+		padding: var(--spacing-3);
+		border: 1px solid var(--color-gray-200);
+		border-radius: var(--radius-md);
+		text-decoration: none;
+		color: inherit;
+		transition: background-color 0.2s, border-color 0.2s;
+	}
+
+	.book-item:hover {
+		background-color: var(--color-gray-50);
+		border-color: var(--color-blue-600);
+	}
+
+	.book-cover-small {
+		flex-shrink: 0;
+		width: 60px;
+		height: 80px;
+		background: var(--color-gray-100);
+		border-radius: var(--radius-sm);
+		overflow: hidden;
+	}
+
+	.book-item-info {
+		flex: 1;
+	}
+
+	.book-title {
+		font-size: var(--font-size-base);
+		font-weight: 500;
+		color: var(--color-gray-900);
+		margin: 0;
 	}
 </style>
