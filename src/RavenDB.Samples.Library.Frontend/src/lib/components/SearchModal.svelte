@@ -218,7 +218,9 @@
 	}
 
 	.search-result-item.selected {
-		background: var(--color-gray-100);
+		background: var(--color-gray-200);
+		border-left: 3px solid var(--color-gray-500);
+		padding-left: calc(var(--spacing-4) - 3px);
 	}
 
 	.result-image {
