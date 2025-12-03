@@ -75,11 +75,13 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         }
 
         var results = await queryable
+            .Statistics(out var stats) // Extract statistics to use it for caching
             .Skip(offset)
             .Take(10)
             .ToArrayAsync();
 
-        return new JsonResult(results);
+        //return new JsonResult(results);
+        return req.TryCachePublicly(new JsonResult(results), stats);
     }
 
     [Function(nameof(Migrate))]

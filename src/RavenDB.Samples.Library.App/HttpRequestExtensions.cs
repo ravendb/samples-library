@@ -13,5 +13,6 @@ public static class HttpRequestExtensions
 
         public string? GetQueryString(string name) =>
             req.Query.TryGetValue(name, out var value) ? value.ToString() : null;
+
     }
 }
