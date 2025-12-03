@@ -6,10 +6,10 @@
 	<title>Home | Library of Ravens</title>
 </svelte:head>
 
-<div class="home-page">
-	<div class="hero-section">
+<div class="page-container">
+	<div class="card card-centered hero-section">
 		<div class="hero-image-container">
-			<img src="{image}" alt="A Raven in a library" class="hero-image" />
+			<img src="{image}" alt="A Raven in a library" class="image-cover" />
 		</div>
 		<h1 class="hero-title">Library of Ravens</h1>
 		<p class="hero-description">
@@ -19,48 +19,31 @@
 </div>
 
 <style>
-	.home-page {
-		max-width: 600px;
-		margin: 0 auto;
-		padding: 40px 24px;
-	}
-
 	.hero-section {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		text-align: center;
-		padding: 24px;
-		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 12px;
 	}
 
 	.hero-image-container {
 		width: 100%;
 		max-width: 256px;
 		aspect-ratio: 1;
-		margin-bottom: 24px;
-		border-radius: 12px;
+		margin-bottom: var(--spacing-6);
+		border-radius: var(--radius-lg);
 		overflow: hidden;
-		background: #f3f4f6;
-	}
-
-	.hero-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		background: var(--color-gray-100);
 	}
 
 	.hero-title {
-		margin-bottom: 16px;
-		font-size: 28px;
+		margin-bottom: var(--spacing-4);
+		font-size: var(--font-size-2xl);
 		font-weight: 600;
 	}
 
 	.hero-description {
-		font-size: 16px;
-		color: #6b7280;
+		font-size: var(--font-size-base);
+		color: var(--color-gray-500);
 		line-height: 1.6;
 	}
 </style>

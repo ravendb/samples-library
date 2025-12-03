@@ -65,15 +65,15 @@
 	.topbar {
 		position: sticky;
 		top: 0;
-		background: white;
-		border-bottom: 1px solid #e5e7eb;
+		background: var(--color-white);
+		border-bottom: 1px solid var(--color-gray-200);
 		z-index: 50;
 	}
 
 	.topbar-content {
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 12px 24px;
+		padding: var(--spacing-3) var(--spacing-6);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -82,7 +82,7 @@
 	.topbar-left {
 		display: flex;
 		align-items: center;
-		gap: 24px;
+		gap: var(--spacing-6);
 	}
 
 	.topbar-right {
@@ -96,7 +96,7 @@
 	}
 
 	.logo-text {
-		font-size: 20px;
+		font-size: var(--font-size-lg);
 		font-weight: 600;
 	}
 
@@ -104,41 +104,41 @@
 		width: 320px;
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		padding: 8px 12px;
-		background: #f3f4f6;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
+		gap: var(--spacing-2);
+		padding: var(--spacing-2) var(--spacing-3);
+		background: var(--color-gray-100);
+		border: 1px solid var(--color-gray-200);
+		border-radius: var(--radius-md);
 		cursor: pointer;
 		transition: all 0.15s;
 	}
 
 	.search-trigger:hover {
-		border-color: #d1d5db;
-		background: #f9fafb;
+		border-color: var(--color-gray-300);
+		background: var(--color-gray-50);
 	}
 
 	.search-icon {
 		width: 16px;
 		height: 16px;
 		stroke-width: 2;
-		color: #9ca3af;
+		color: var(--color-gray-400);
 	}
 
 	.search-placeholder {
 		flex: 1;
 		text-align: left;
-		color: #9ca3af;
-		font-size: 14px;
+		color: var(--color-gray-400);
+		font-size: var(--font-size-sm);
 	}
 
 	.kbd {
-		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 4px;
+		background: var(--color-white);
+		border: 1px solid var(--color-gray-200);
+		border-radius: var(--radius-sm);
 		padding: 2px 6px;
-		font-size: 12px;
-		color: #6b7280;
+		font-size: var(--font-size-xs);
+		color: var(--color-gray-500);
 		font-family: monospace;
 	}
 
@@ -154,14 +154,14 @@
 	.user-avatar {
 		width: 36px;
 		height: 36px;
-		border-radius: 50%;
-		background: #f3f4f6;
+		border-radius: var(--radius-full);
+		background: var(--color-gray-100);
 	}
 
 	.user-avatar-placeholder {
 		width: 36px;
 		height: 36px;
-		border-radius: 50%;
-		background: #e5e7eb;
+		border-radius: var(--radius-full);
+		background: var(--color-gray-200);
 	}
 </style>

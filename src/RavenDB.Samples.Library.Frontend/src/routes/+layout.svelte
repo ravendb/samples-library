@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import TopBar from '$lib/components/TopBar.svelte';
 
@@ -25,8 +26,8 @@
 		font-family:
 			-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
 			'Helvetica Neue', sans-serif;
-		background: #f9fafb;
-		color: #111827;
+		background: var(--color-gray-50);
+		color: var(--color-gray-900);
 		line-height: 1.5;
 	}
 
