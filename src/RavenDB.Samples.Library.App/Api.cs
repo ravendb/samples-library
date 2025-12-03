@@ -19,7 +19,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     [Function(nameof(BooksGetById))]
     public async Task<IActionResult> BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
     {
-        // Prefetch Author using the Include method. This will result in a single round trip to server
+        // Fetch Author using the Include method. This will result in a single round trip to server
         var book = await session
             .Include<Book>(b => b.AuthorId)
             .LoadAsync<Book>(Book.BuildId(id));
@@ -39,12 +39,24 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     [Function(nameof(AuthorsGetById))]
     public async Task<IActionResult> AuthorsGetById([HttpTrigger("get", Route = "authors/{id}")] HttpRequest req, string id)
     {
-        var author = await session.LoadAsync<Author>(Author.BuildId(id));
+        var authorId = Author.BuildId(id);
+        
+        // Lazily fetch author's books. We use LazilyAsync to make it happen in one request to the database.
+        var lazyBooks = session.Query<Book, BooksByAuthor>()
+            .Where(book => book.AuthorId == authorId)
+            .LazilyAsync();
 
+        var author = await session.LoadAsync<Author>(authorId);
+        var books = await lazyBooks.Value;
+        
         if (author == null)
             return new NotFoundResult();
-
-        return new JsonResult(author);
+        
+        return new JsonResult(new 
+        {
+            author.Id, author.FirstName, author.LastName,
+            Books = books.Select(static book => new {book.Id, book.Title})
+        });
     }
 
     [Function(nameof(Search))]

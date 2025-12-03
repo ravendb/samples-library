@@ -7,14 +7,26 @@ namespace RavenDB.Samples.Library.Setup.Migrations;
 [Migration(2)]
 public sealed class CreateIndexes : Migration
 {
+    private static readonly IAbstractIndexCreationTask[] Indexes =
+    {
+        new GlobalSearchIndex(),
+        new BorrowedBooksByUserIdIndex(),
+        new BooksByAuthor(),
+    };
+    
     public override void Up()
     {
-        new GlobalSearchIndex().Execute(DocumentStore);
+        foreach (var index in Indexes)
+        {
+            index.Execute(DocumentStore);
+        }
     }
 
     public override void Down()
     {
-        DocumentStore.Maintenance.Send(
-            new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(new GlobalSearchIndex().IndexName));
+        foreach (var index in Indexes)
+        {
+            DocumentStore.Maintenance.Send(new Raven.Client.Documents.Operations.Indexes.DeleteIndexOperation(index.IndexName));
+        }
     }
 }
