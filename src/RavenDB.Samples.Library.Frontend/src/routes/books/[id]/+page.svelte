@@ -12,23 +12,28 @@
 	onMount(async () => {
 		const id = page.params.id;
 
-		try {
-			book = await getBookById(id);
-		} catch (e) {
-			if (e instanceof Error && e.message.includes('404')) {
-				notFound = true;
-			} else {
-				error = e instanceof Error ? e.message : 'Failed to load book';
-			}
-		} finally {
+		if (id === undefined) {
+			notFound = true;
 			loading = false;
+		}
+		else {
+			try {
+				book = await getBookById(id);
+			} catch (e) {
+				if (e instanceof Error && e.message.includes('404')) {
+					notFound = true;
+				} else {
+					error = e instanceof Error ? e.message : 'Failed to load book';
+				}
+			} finally {
+				loading = false;
+			}
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title
-	>
+	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title>
 </svelte:head>
 
 <div class="book-page">
@@ -63,12 +68,12 @@
 					<span class="label">ID:</span>
 					<span class="value">{book.id}</span>
 				</p>
-				{#if book.authorId}
+				{#if book.author}
 					<p class="book-meta">
 						<span class="label">Author:</span>
 						<a
-							href={resolve(`/authors/${book.authorId.replace('Authors/', '')}`)}
-							class="author-link">{book.authorId}</a
+							href={resolve(`/authors/${book.author.id.replace('Authors/', '')}`)}
+							class="author-link">{book.author.firstName} {book.author.lastName}</a
 						>
 					</p>
 				{/if}

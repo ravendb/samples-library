@@ -15,18 +15,36 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 {
     public const string EnvVarAdminCommandKeyName = "CommandKey";
     public const string HeaderAdminCommandKeyName = "X-Command-Key";
-    
-    [Function(nameof(BooksGetById))]
-    public Task<IActionResult> BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id) => Get<Book>(id);
-    
-    [Function(nameof(AuthorsGetById))]
-    public Task<IActionResult> AuthorsGetById([HttpTrigger("get", Route = "authors/{id}")] HttpRequest req, string id) => Get<Author>(id);
 
-    private async Task<IActionResult> Get<TEntity>(string id)
-        where TEntity : IRoot
+    [Function(nameof(BooksGetById))]
+    public async Task<IActionResult> BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
     {
-        var root = await session.LoadAsync<TEntity>(TEntity.BuildId(id));
-        return root == null ? new NotFoundResult() : new JsonResult(root);
+        // Prefetch Author using the Include method. This will result in a single round trip to server
+        var book = await session
+            .Include<Book>(b => b.AuthorId)
+            .LoadAsync<Book>(Book.BuildId(id));
+
+        if (book == null)
+            return new NotFoundResult();
+
+        var author = await session.LoadAsync<Author>(book.AuthorId);
+
+        return new JsonResult(
+            new
+            {
+                book.Id, book.Title, Author = author
+            });
+    }
+
+    [Function(nameof(AuthorsGetById))]
+    public async Task<IActionResult> AuthorsGetById([HttpTrigger("get", Route = "authors/{id}")] HttpRequest req, string id)
+    {
+        var author = await session.LoadAsync<Author>(Author.BuildId(id));
+
+        if (author == null)
+            return new NotFoundResult();
+
+        return new JsonResult(author);
     }
 
     [Function(nameof(Search))]
@@ -38,7 +56,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var queryable = session
             .Query<GlobalSearchIndex.Result, GlobalSearchIndex>()
             .Include(r => r.Id);
-        
+
         if (!string.IsNullOrEmpty(query))
         {
             queryable = queryable.Search(r => r.Query, query);
@@ -62,9 +80,9 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         {
             return new StatusCodeResult(StatusCodes.Status403Forbidden);
         }
-        
+
         migrations.Run();
-        
+
         return new StatusCodeResult(StatusCodes.Status202Accepted);
     }
 }
