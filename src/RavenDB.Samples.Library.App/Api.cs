@@ -29,11 +29,13 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 
         var author = await session.LoadAsync<Author>(book.AuthorId);
 
-        return new JsonResult(
+        var result = new JsonResult(
             new
             {
                 book.Id, book.Title, Author = author
             });
+        
+        return req.TryCachePublicly(result, session, author, book);
     }
 
     [Function(nameof(AuthorsGetById))]
@@ -43,6 +45,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         
         // Lazily fetch author's books. We use LazilyAsync to make it happen in one request to the database.
         var lazyBooks = session.Query<Book, BooksByAuthor>()
+            .Statistics(out var stats)
             .Where(book => book.AuthorId == authorId)
             .LazilyAsync();
 
@@ -51,12 +54,14 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         
         if (author == null)
             return new NotFoundResult();
-        
-        return new JsonResult(new 
+
+        var result = new JsonResult(new 
         {
             author.Id, author.FirstName, author.LastName,
             Books = books.Select(static book => new {book.Id, book.Title})
         });
+
+        return req.TryCachePublicly(result, stats, session, author);
     }
 
     [Function(nameof(Search))]

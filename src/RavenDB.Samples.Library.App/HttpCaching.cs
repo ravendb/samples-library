@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Primitives;
@@ -11,17 +14,52 @@ namespace RavenDB.Samples.Library.App;
 /// </summary>
 public static class HttpCaching
 {
-    public static IActionResult TryCachePublicly(this HttpRequest req, ActionResult original, QueryStatistics stats)
+    extension(HttpRequest req)
     {
-        var ifNoneMatch = req.Headers.IfNoneMatch;
-
-        if (stats.ResultEtag == null)
+        public IActionResult TryCachePublicly(ActionResult original, QueryStatistics stats)
         {
-            // No etag, return the original without any ETag
-            return original;
+            if (stats.ResultEtag == null)
+            {
+                // No etag, return the original without any ETag
+                return original;
+            }
+
+            return TryCachePublicly(req, original, stats.ResultEtag.GetValueOrDefault(0).ToString());
         }
 
-        var etag = stats.ResultEtag.ToString();
+        public IActionResult TryCachePublicly<T>(ActionResult original, QueryStatistics stats, IAsyncDocumentSession session, T entity)
+        {
+            var vector = session.Advanced.GetChangeVectorFor(entity);
+        
+            if (stats.ResultEtag == null && vector == null)
+            {
+                // No etag, return the original without any ETag
+                return original;
+            }
+
+            return TryCachePublicly(req, original, stats.ResultEtag.GetValueOrDefault(0).ToString(), vector);
+        }
+        
+        public IActionResult TryCachePublicly<T1, T2>(ActionResult original, IAsyncDocumentSession session, T1 entity1, T2 entity2)
+        {
+            var v1 = session.Advanced.GetChangeVectorFor(entity1);
+            var v2 = session.Advanced.GetChangeVectorFor(entity2);
+
+            if (v1 == null || v2 == null)
+            {
+                // No etag, return the original without any ETag
+                return original;
+            }
+
+            return TryCachePublicly(req, original, v1, v2);
+        }
+    }
+
+    private static IActionResult TryCachePublicly(HttpRequest req, ActionResult original, params Span<string> parts)
+    {
+        var etag = CreateETag(parts);
+
+        var ifNoneMatch = req.Headers.IfNoneMatch;
         if (ifNoneMatch.Count == 0 || ifNoneMatch.First() != etag)
         {
             // Request contained no ETag or was different, but the resource has one. ETag it!
@@ -32,7 +70,12 @@ public static class HttpCaching
         return new NotModifiedResult(etag);
     }
 
-    private static readonly StringValues CachePublic = new("public");
+    private static string CreateETag(Span<string> parts)
+    {
+        return string.Join("=", parts);
+    }
+
+    private static readonly StringValues CachePublic = new("public, must-revalidate");
     
     private sealed class NotModifiedResult(string etag) :
         ActionResult,
