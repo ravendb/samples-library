@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
+	import TipBox from '$lib/components/TipBox.svelte';
 
 	let book = $state<Book | null>(null);
 	let loading = $state(true);
@@ -54,6 +55,11 @@
 			<a href={resolve('/')} class="link-primary">← Back to Home</a>
 		</div>
 	{:else if book}
+		<TipBox
+			contextText="The book details page. Provides information about the book, including the number of copies. You can borrow a copy of this book here if some are available."
+			ravendbText="This page uses extensive http caching so that it can minimize the egress data. We leverage ETags for this purpose and the fact, that RavenDB allows you to retrieve them with ease. Additionally, we combine multiple queries using .Include and .Lazy"
+		/>
+
 		<div class="card book-card">
 			<div class="book-cover">
 				<img
@@ -86,6 +92,7 @@
 	.book-card {
 		display: flex;
 		gap: var(--spacing-6);
+		margin-top: var(--spacing-6);
 	}
 
 	.book-cover {
