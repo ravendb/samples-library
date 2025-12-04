@@ -35,7 +35,6 @@
 		padding: var(--spacing-4);
 		border-radius: var(--radius-lg);
 		border: 2px solid;
-		flex: 1;
 	}
 
 	.tip-context {
@@ -68,12 +67,5 @@
 		font-size: var(--font-size-sm);
 		color: var(--color-gray-900);
 		line-height: 1.6;
-	}
-
-	/* Side-by-side layout for large screens */
-	@media (min-width: 768px) {
-		.tip-box {
-			flex-direction: row;
-		}
 	}
 </style>
