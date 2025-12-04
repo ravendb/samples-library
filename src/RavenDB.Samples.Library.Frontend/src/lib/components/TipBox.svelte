@@ -1,10 +1,28 @@
 <script lang="ts">
+	import { marked } from 'marked';
+	import DOMPurify from 'dompurify';
+
 	interface Props {
 		contextText?: string;
 		ravendbText?: string;
 	}
 
 	let { contextText, ravendbText }: Props = $props();
+
+	// Configure marked for inline rendering (no wrapping <p> tags for single lines)
+	marked.use({
+		breaks: true,
+		gfm: true
+	});
+
+	function renderMarkdown(text: string | undefined): string {
+		if (!text) return '';
+		const rawHtml = marked.parse(text, { async: false }) as string;
+		return DOMPurify.sanitize(rawHtml);
+	}
+
+	const contextHtml = $derived(renderMarkdown(contextText));
+	const ravendbHtml = $derived(renderMarkdown(ravendbText));
 </script>
 
 {#if contextText || ravendbText}
@@ -12,13 +30,15 @@
 		{#if contextText}
 			<div class="tip-section tip-context">
 				<h3 class="tip-heading">Library Tip</h3>
-				<p class="tip-text">{contextText}</p>
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with DOMPurify -->
+				<div class="tip-text">{@html contextHtml}</div>
 			</div>
 		{/if}
 		{#if ravendbText}
 			<div class="tip-section tip-ravendb">
 				<h3 class="tip-heading">RavenDB Tip</h3>
-				<p class="tip-text">{ravendbText}</p>
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with DOMPurify -->
+				<div class="tip-text">{@html ravendbHtml}</div>
 			</div>
 		{/if}
 	</div>
@@ -67,5 +87,60 @@
 		font-size: var(--font-size-sm);
 		color: var(--color-gray-900);
 		line-height: 1.6;
+	}
+
+	.tip-text :global(p) {
+		margin: 0 0 var(--spacing-2) 0;
+	}
+
+	.tip-text :global(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.tip-text :global(code) {
+		background-color: rgba(0, 0, 0, 0.05);
+		padding: 0.125rem 0.25rem;
+		border-radius: 3px;
+		font-family: 'Courier New', Courier, monospace;
+		font-size: 0.9em;
+	}
+
+	.tip-text :global(a) {
+		color: inherit;
+		text-decoration: underline;
+		font-weight: 500;
+	}
+
+	.tip-text :global(a:hover) {
+		opacity: 0.8;
+	}
+
+	.tip-context .tip-text :global(a) {
+		color: var(--color-orange-700);
+	}
+
+	.tip-ravendb .tip-text :global(a) {
+		color: var(--color-blue-700);
+	}
+
+	.tip-text :global(pre) {
+		background-color: rgba(0, 0, 0, 0.05);
+		padding: var(--spacing-2);
+		border-radius: var(--radius-md);
+		overflow-x: auto;
+		margin: var(--spacing-2) 0;
+	}
+
+	.tip-text :global(pre code) {
+		background-color: transparent;
+		padding: 0;
+	}
+
+	.tip-text :global(strong) {
+		font-weight: 600;
+	}
+
+	.tip-text :global(em) {
+		font-style: italic;
 	}
 </style>
