@@ -81,12 +81,6 @@
 
 	.book-author {
 		font-size: var(--font-size-xs);
-		color: var(--color-blue-600);
-		text-decoration: none;
 		line-height: 1.4;
-	}
-
-	.book-author:hover {
-		text-decoration: underline;
 	}
 </style>
