@@ -63,7 +63,7 @@
 	{:else if author}
 		<TipBox
 			contextText="The author details page. Provides information about the author, including the list of their books. Here, you can easily navigate to a book of your interest if you only know the author."
-			ravendbText="As books and authors change very infrequently, we cache the heavily, by leveraging ETags. This means, that once you fetch the authors data, they will be kept in cache and only validated against the server. This greatly reduces egress data for users that click a lot. Also, can be used by a proxy to cache aggressively and only validate against the source."
+			ravendbText="As books and authors change very infrequently, we cache them heavily, by leveraging ETags. This means, that once you fetch the author's data, they will be kept in cache and only validated against the server. This greatly reduces egress data for users that click a lot. Also, can be used by a proxy to cache aggressively and only validate against the source."
 		/>
 
 		<div class="card author-card">
