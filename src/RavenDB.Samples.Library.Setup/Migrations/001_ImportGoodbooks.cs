@@ -99,7 +99,8 @@ public sealed class ImportGoodBooks : Migration
                 var copy = new BookCopy
                 {
                     Id = $"{collections.bookCopies}/{workId}-{copyNumber}",
-                    BookEditionId = edition.Id
+                    BookEditionId = edition.Id,
+                    BookId = book.Id
                 };
         
                 bulkInsert.Store(copy);

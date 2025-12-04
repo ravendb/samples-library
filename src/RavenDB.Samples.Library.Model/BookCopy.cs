@@ -11,4 +11,14 @@ public class BookCopy
     /// <see cref="BookEdition"/> that this copy is of.
     /// </summary>
     public string BookEditionId { get; set; }
+    
+    public string BookId { get; set; }
+    
+    public BookCopyStatus  Status { get; set; }
+}
+
+public enum BookCopyStatus
+{
+    Available,
+    Borrowed
 }
