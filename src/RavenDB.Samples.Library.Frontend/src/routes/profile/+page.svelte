@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
-	import { getUserProfile, type UserProfile, type Book } from '$lib/services/user';
+	import { getUserProfile, type UserProfile } from '$lib/services/user';
+	import TipBox from '$lib/components/TipBox.svelte';
 
 	let userId = $state('');
 	let avatarUrl = $state('');
@@ -30,13 +31,24 @@
 <div class="page-container">
 	<h1 class="heading-page">Profile</h1>
 
-	<div class="card profile-card">
-		{#if avatarUrl}
-			<img src={avatarUrl} alt="User avatar" class="profile-avatar avatar-round" />
-		{/if}
-		<div class="profile-info">
-			<p class="profile-label text-muted">User ID</p>
-			<p class="profile-value text-mono">{userId}</p>
+	<div class="profile-content">
+		<div class="profile-left">
+			<div class="card profile-card">
+				{#if avatarUrl}
+					<img src={avatarUrl} alt="User avatar" class="profile-avatar avatar-round" />
+				{/if}
+				<div class="profile-info">
+					<p class="profile-label text-muted">User ID</p>
+					<p class="profile-value text-mono">{userId}</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="profile-right">
+			<TipBox
+				contextText="Your user profile created automatically for the convenience of using the app. You can see your avatar, id and the list of borrowed books."
+				ravendbText="Data for this page is retrieved in an efficient way by using .Include when querying for books. This means that the borrowed books are fetched in one request"
+			/>
 		</div>
 	</div>
 
@@ -48,7 +60,7 @@
 			<p class="card card-centered error-state">{error}</p>
 		{:else if userProfile && userProfile.borrowed.length > 0}
 			<ul class="card borrowed-list">
-				{#each userProfile.borrowed as book}
+				{#each userProfile.borrowed as book (book.id)}
 					<li class="borrowed-item">
 						<span class="book-title">{book.title}</span>
 					</li>
@@ -61,10 +73,26 @@
 </div>
 
 <style>
+	.profile-content {
+		display: flex;
+		gap: var(--spacing-6);
+	}
+
+	.profile-left {
+		flex: 1;
+	}
+
+	.profile-right {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.profile-card {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-6);
+		height: 100%;
 	}
 
 	.profile-avatar {
@@ -109,5 +137,11 @@
 	.book-title {
 		font-weight: 500;
 		color: var(--color-gray-900);
+	}
+
+	@media (max-width: 799px) {
+		.profile-content {
+			flex-direction: column;
+		}
 	}
 </style>
