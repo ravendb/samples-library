@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
 	import TipBox from '$lib/components/TipBox.svelte';
 
@@ -10,6 +10,7 @@
 	let notFound = $state(false);
 	let error = $state<string | null>(null);
 	let showBorrowedPopup = $state(false);
+	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(async () => {
 		const id = page.params.id;
@@ -32,10 +33,17 @@
 		}
 	});
 
+	onDestroy(() => {
+		if (popupTimeoutId !== null) {
+			clearTimeout(popupTimeoutId);
+		}
+	});
+
 	function handleBorrow() {
 		showBorrowedPopup = true;
-		setTimeout(() => {
+		popupTimeoutId = setTimeout(() => {
 			showBorrowedPopup = false;
+			popupTimeoutId = null;
 		}, 2000);
 	}
 </script>
