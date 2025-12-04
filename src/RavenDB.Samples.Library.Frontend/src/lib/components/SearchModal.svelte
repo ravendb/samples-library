@@ -111,8 +111,8 @@
 				{:else if results.length > 0}
 					{#each results as result, index (result.id)}
 						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-						<a 
-							href={resolveLink(result.link)} 
+						<a
+							href={resolveLink(result.link)}
 							class="search-result-item"
 							class:selected={index === selectedIndex}
 							onclick={close}

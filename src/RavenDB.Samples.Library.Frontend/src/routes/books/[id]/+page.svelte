@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
 	import TipBox from '$lib/components/TipBox.svelte';
 
@@ -9,6 +9,8 @@
 	let loading = $state(true);
 	let notFound = $state(false);
 	let error = $state<string | null>(null);
+	let showBorrowedPopup = $state(false);
+	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(async () => {
 		const id = page.params.id;
@@ -16,8 +18,7 @@
 		if (id === undefined) {
 			notFound = true;
 			loading = false;
-		}
-		else {
+		} else {
 			try {
 				book = await getBookById(id);
 			} catch (e) {
@@ -31,10 +32,25 @@
 			}
 		}
 	});
+
+	onDestroy(() => {
+		if (popupTimeoutId !== null) {
+			clearTimeout(popupTimeoutId);
+		}
+	});
+
+	function handleBorrow() {
+		showBorrowedPopup = true;
+		popupTimeoutId = setTimeout(() => {
+			showBorrowedPopup = false;
+			popupTimeoutId = null;
+		}, 2000);
+	}
 </script>
 
 <svelte:head>
-	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title>
+	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title
+	>
 </svelte:head>
 
 <div class="page-container">
@@ -80,6 +96,17 @@
 								>
 							</p>
 						{/if}
+						{#if book.availability}
+							<p class="meta-row">
+								<span class="meta-label">Availability:</span>
+								<span class="meta-value"
+									>{book.availability.available} of {book.availability.total} available</span
+								>
+							</p>
+							{#if book.availability.available > 0}
+								<button class="btn-borrow" onclick={handleBorrow}> Borrow </button>
+							{/if}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -93,6 +120,14 @@
 		</div>
 	{/if}
 </div>
+
+{#if showBorrowedPopup}
+	<div class="popup-overlay">
+		<div class="popup">
+			<p>Borrowed</p>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.book-content {
@@ -127,6 +162,50 @@
 
 	.book-info {
 		flex: 1;
+	}
+
+	.btn-borrow {
+		margin-top: var(--spacing-4);
+		padding: var(--spacing-2) var(--spacing-4);
+		background: var(--color-blue-600);
+		color: var(--color-white);
+		border: none;
+		border-radius: var(--radius-md);
+		font-size: var(--font-size-base);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background 0.15s;
+	}
+
+	.btn-borrow:hover {
+		background: var(--color-blue-700);
+	}
+
+	.popup-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.3);
+		z-index: 100;
+	}
+
+	.popup {
+		background: var(--color-white);
+		padding: var(--spacing-6) var(--spacing-8);
+		border-radius: var(--radius-lg);
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.popup p {
+		margin: 0;
+		font-size: var(--font-size-lg);
+		font-weight: 600;
+		color: var(--color-gray-900);
 	}
 
 	@media (max-width: 799px) {

@@ -4,6 +4,10 @@ export interface Book {
 	id: string;
 	title: string;
 	author: Author;
+	availability?: {
+		available: number;
+		total: number;
+	};
 }
 
 export interface Author {

@@ -16,18 +16,17 @@ interface ApiSearchResult {
 function transformApiResult(result: ApiSearchResult): SearchResult {
 	const id = result.id;
 	const seed = encodeURIComponent(id);
-	const prefix = id.slice(0, id.indexOf("/"));
-	let type: string = "";
-	let imageUrl: string = "";
+	const prefix = id.slice(0, id.indexOf('/'));
+	let type: string = '';
+	let imageUrl: string = '';
 
-	switch (prefix)
-	{
-		case "Books":
-			type = "book";
+	switch (prefix) {
+		case 'Books':
+			type = 'book';
 			imageUrl = `https://api.dicebear.com/9.x/shapes/svg?seed=${seed}`;
 			break;
-		case "Authors":
-			type = "author";
+		case 'Authors':
+			type = 'author';
 			imageUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
 			break;
 	}

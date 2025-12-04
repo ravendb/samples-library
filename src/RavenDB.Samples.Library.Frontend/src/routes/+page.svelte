@@ -29,12 +29,12 @@
 		<div class="hero-content">
 			<div class="hero-left">
 				<div class="hero-image-container">
-					<img src="{image}" alt="A Raven in a library" class="image-cover" />
+					<img src={image} alt="A Raven in a library" class="image-cover" />
 				</div>
 				<h1 class="hero-title">Library of Ravens</h1>
 			</div>
 			<div class="hero-right">
-				<TipBox 
+				<TipBox
 					contextText="In Library of Ravens, you can borrow books and bring them back. We already created your virtual profile. Click on books, search them, borrow them. Enjoy!"
 					ravendbText="This Library uses `RavenDB` extensively. It integrates with `Azure Storage Queues`, leverages `http` caching, and query capabilities provided by `RavenDB`."
 				/>
