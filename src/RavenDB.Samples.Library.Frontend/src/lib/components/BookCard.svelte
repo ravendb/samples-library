@@ -9,28 +9,29 @@
 	let { book }: Props = $props();
 </script>
 
-<a href={resolve(`/books/${book.id.replace('Books/', '')}`)} class="book-card">
-	<div class="book-cover">
-		<img
-			src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
-			alt="Book cover for {book.title}"
-			class="image-cover"
-		/>
-	</div>
-	<div class="book-info">
-		<h3 class="book-title">{book.title}</h3>
-		{#if book.author}
-			<a
-				href={resolve(`/authors/${book.author.id.replace('Authors/', '')}`)}
-				class="book-author link-primary"
-				onclick={(e) => e.stopPropagation()}
-			>
-				{book.author.firstName}
-				{book.author.lastName}
-			</a>
-		{/if}
-	</div>
-</a>
+<div class="book-card">
+	<a href={resolve(`/books/${book.id.replace('Books/', '')}`)} class="book-link">
+		<div class="book-cover">
+			<img
+				src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
+				alt="Book cover for {book.title}"
+				class="image-cover"
+			/>
+		</div>
+		<div class="book-info">
+			<h3 class="book-title">{book.title}</h3>
+		</div>
+	</a>
+	{#if book.author}
+		<a
+			href={resolve(`/authors/${book.author.id.replace('Authors/', '')}`)}
+			class="book-author link-primary"
+		>
+			{book.author.firstName}
+			{book.author.lastName}
+		</a>
+	{/if}
+</div>
 
 <style>
 	.book-card {
@@ -40,8 +41,6 @@
 		padding: var(--spacing-3);
 		border: 1px solid var(--color-gray-200);
 		border-radius: var(--radius-md);
-		text-decoration: none;
-		color: inherit;
 		transition:
 			background-color 0.2s,
 			border-color 0.2s;
@@ -50,6 +49,14 @@
 	.book-card:hover {
 		background-color: var(--color-gray-50);
 		border-color: var(--color-blue-600);
+	}
+
+	.book-link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2);
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.book-cover {
@@ -62,9 +69,6 @@
 
 	.book-info {
 		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-2);
 	}
 
 	.book-title {
