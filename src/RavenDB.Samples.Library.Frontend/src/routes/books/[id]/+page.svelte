@@ -17,8 +17,7 @@
 		if (id === undefined) {
 			notFound = true;
 			loading = false;
-		}
-		else {
+		} else {
 			try {
 				book = await getBookById(id);
 			} catch (e) {
@@ -42,7 +41,8 @@
 </script>
 
 <svelte:head>
-	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title>
+	<title>{book ? book.title : notFound ? 'Book Not Found' : 'Loading...'} | Library of Ravens</title
+	>
 </svelte:head>
 
 <div class="page-container">
@@ -91,12 +91,12 @@
 						{#if book.availability}
 							<p class="meta-row">
 								<span class="meta-label">Availability:</span>
-								<span class="meta-value">{book.availability.available} of {book.availability.total} available</span>
+								<span class="meta-value"
+									>{book.availability.available} of {book.availability.total} available</span
+								>
 							</p>
 							{#if book.availability.available > 0}
-								<button class="btn-borrow" onclick={handleBorrow}>
-									Borrow
-								</button>
+								<button class="btn-borrow" onclick={handleBorrow}> Borrow </button>
 							{/if}
 						{/if}
 					</div>
