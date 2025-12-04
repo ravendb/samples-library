@@ -37,7 +37,21 @@ public static class HttpCaching
                 return original;
             }
 
-            return TryCachePublicly(req, original, stats.ResultEtag.GetValueOrDefault(0).ToString(), vector);
+            return TryCachePublicly(req, original, BuildETag(stats), vector);
+        }
+
+        public IActionResult TryCachePublicly<T1, T2>(ActionResult original, QueryStatistics stats, IAsyncDocumentSession session, T1 entity1, T2 entity2)
+        {
+            var v1 = session.Advanced.GetChangeVectorFor(entity1);
+            var v2 = session.Advanced.GetChangeVectorFor(entity2);
+
+            if (v1 == null || v2 == null)
+            {
+                // No etag, return the original without any ETag
+                return original;
+            }
+
+            return TryCachePublicly(req, original, BuildETag(stats), v1, v2);
         }
         
         public IActionResult TryCachePublicly<T1, T2>(ActionResult original, IAsyncDocumentSession session, T1 entity1, T2 entity2)
@@ -54,6 +68,8 @@ public static class HttpCaching
             return TryCachePublicly(req, original, v1, v2);
         }
     }
+    
+    private static string BuildETag(QueryStatistics stats) => stats.ResultEtag.GetValueOrDefault(0).ToString();
 
     private static IActionResult TryCachePublicly(HttpRequest req, ActionResult original, params Span<string> parts)
     {

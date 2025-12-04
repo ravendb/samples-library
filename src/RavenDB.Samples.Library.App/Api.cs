@@ -23,6 +23,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 
         // Use a query against the map-reduce index
         var lazyAvailability = session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
+            .Statistics(out var stats)
             .Where(availability => availability.BookId == bookId)
             .LazilyAsync();
 
@@ -46,7 +47,8 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
                 Availability = new { availability.Available, availability.Total }
             });
         
-        return req.TryCachePublicly(result, session, author, book);
+        // Combine all inputs for the stats
+        return req.TryCachePublicly(result, stats, session, author, book);
     }
 
     [Function(nameof(AuthorsGetById))]

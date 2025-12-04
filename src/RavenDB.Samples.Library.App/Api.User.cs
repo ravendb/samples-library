@@ -21,16 +21,12 @@ public class UserApi(IAsyncDocumentSession session)
             return new UnauthorizedResult();
         }
         
-        var user = await session.LoadAsync<User>(userId);
-        
-        if (user == null)
-        {
-            user = new User { Id = userId };
-            await session.StoreAsync(user);
-            await session.SaveChangesAsync();
+        var (created, user) = await TryCreateUser(userId);
 
+        if (created)
+        {
             // A user has no books, if it was just created.
-            return GetProfile(user, []);
+            return GetProfile(user, []);   
         }
         
         var borrowedBooks = await session.Query<UserBook, BorrowedBooksByUserIdIndex>()
@@ -44,6 +40,32 @@ public class UserApi(IAsyncDocumentSession session)
         return GetProfile(user, books.Values);
     }
 
+    [Function(nameof(UserGet))]
+    public async Task<IActionResult> NotificationsGet([HttpTrigger("get", Route = "user/notifications")] HttpRequest req)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+        
+        var (created, user) = await TryCreateUser(userId);
+
+        if (created)
+        {
+            // A created user has no notifications
+            return new JsonResult(Array.Empty<object>());
+        }
+
+        // Max notifications
+        const int max = 25;
+        var notifications = await session.Query<Notification>()
+            .Where(x => x.UserId == userId)
+            .Take(max)
+            .ToArrayAsync();
+
+        return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text }));
+    }
+
     private static JsonResult GetProfile(User user, IEnumerable<Book> books)
     {
         return new JsonResult(new
@@ -51,6 +73,20 @@ public class UserApi(IAsyncDocumentSession session)
             Id = user.Id,
             Borrowed = books.ToArray()
         });
+    }
+
+    private async Task<(bool created, User user)> TryCreateUser(string userId)
+    {
+        var user = await session.LoadAsync<User>(userId);
+
+        if (user != null) 
+            return (false, user);
+        
+        user = new User { Id = userId };
+        await session.StoreAsync(user);
+        await session.SaveChangesAsync();
+            
+        return (true, user);
     }
 
     private static bool TryGetUserId(HttpRequest req, [MaybeNullWhen(false)] out string userId)
