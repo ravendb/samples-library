@@ -36,7 +36,7 @@
 			<div class="hero-right">
 				<TipBox 
 					contextText="In Library of Ravens, you can borrow books and bring them back. We already created your virtual profile. Click on books, search them, borrow them. Enjoy!"
-					ravendbText="This Library uses RavenDB extensively. It integrates with Azure Storage Queues, leverages caching, and query capabilities provided by RavenDB."
+					ravendbText="This Library uses `RavenDB` extensively. It integrates with `Azure Storage Queues`, leverages `http` caching, and query capabilities provided by `RavenDB`."
 				/>
 			</div>
 		</div>

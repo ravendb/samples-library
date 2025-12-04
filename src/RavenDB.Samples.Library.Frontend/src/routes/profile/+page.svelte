@@ -47,7 +47,7 @@
 		<div class="profile-right">
 			<TipBox
 				contextText="Your user profile created automatically for the convenience of using the app. You can see your avatar, id and the list of borrowed books."
-				ravendbText="Data for this page is retrieved in an efficient way by using .Include when querying for books. This means that the borrowed books are fetched in one request"
+				ravendbText="Data for this page is retrieved in an efficient way by using `.Include` (see: [docs](https://docs.ravendb.net/7.1/client-api/how-to/handle-document-relationships#includes)) when querying for books. This means that both, the borrowed copies and the books they link to, are fetched in one request."
 			/>
 		</div>
 	</div>
