@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import image from '$lib/assets/image.webp';
 	import BookCard from '$lib/components/BookCard.svelte';
+	import TipBox from '$lib/components/TipBox.svelte';
 	import { getHomeBooks, type Book } from '$lib/services/book';
 
 	let books = $state<Book[]>([]);
@@ -24,14 +25,24 @@
 </svelte:head>
 
 <div class="page-container">
-	<div class="card card-centered hero-section">
-		<div class="hero-image-container">
-			<img src="{image}" alt="A Raven in a library" class="image-cover" />
+	<div class="card hero-section">
+		<div class="hero-content">
+			<div class="hero-left">
+				<div class="hero-image-container">
+					<img src="{image}" alt="A Raven in a library" class="image-cover" />
+				</div>
+				<h1 class="hero-title">Library of Ravens</h1>
+				<p class="hero-description">
+					Welcome to our collection. Discover books, explore knowledge, and find your next great read.
+				</p>
+			</div>
+			<div class="hero-right">
+				<TipBox 
+					contextText="Welcome to the Library of Ravens. You can borrow some books and bring them back."
+					ravendbText="This application uses RavenDB as the main store. It integrates with Azure Storage Queues and leverages caching and query capabilities provided by RavenDB"
+				/>
+			</div>
 		</div>
-		<h1 class="hero-title">Library of Ravens</h1>
-		<p class="hero-description">
-			Welcome to our collection. Discover books, explore knowledge, and find your next great read.
-		</p>
 	</div>
 
 	{#if loading}
@@ -56,9 +67,26 @@
 
 <style>
 	.hero-section {
+		padding: var(--spacing-6);
+	}
+
+	.hero-content {
+		display: flex;
+		gap: var(--spacing-6);
+	}
+
+	.hero-left {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		text-align: center;
+	}
+
+	.hero-right {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.hero-image-container {
@@ -81,6 +109,16 @@
 		font-size: var(--font-size-base);
 		color: var(--color-gray-500);
 		line-height: 1.6;
+	}
+
+	@media (max-width: 799px) {
+		.hero-content {
+			flex-direction: column;
+		}
+
+		.hero-right {
+			margin-top: var(--spacing-4);
+		}
 	}
 
 	.books-section {

@@ -10,7 +10,12 @@
 	--color-gray-900: #111827;
 	--color-white: #ffffff;
 	--color-blue-600: #2563eb;
+	--color-blue-100: #dbeafe;
+	--color-blue-700: #1d4ed8;
 	--color-red-600: #dc2626;
+	--color-orange-100: #ffedd5;
+	--color-orange-600: #ea580c;
+	--color-orange-700: #c2410c;
 
 	/* Spacing */
 	--spacing-2: 8px;
