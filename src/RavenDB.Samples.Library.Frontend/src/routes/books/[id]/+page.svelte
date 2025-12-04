@@ -114,7 +114,7 @@
 			<div class="book-right">
 				<TipBox
 					contextText="The book details page. Provides information about the book, including the number of copies. You can borrow a copy of this book here if some are available."
-					ravendbText="This page uses extensive http caching to reduce the egress data. Requests to the database are grouped using `.Include` (see: [docs](https://docs.ravendb.net/7.1/client-api/session/loading-entities#load-with-includes)"
+					ravendbText="This page uses extensive http caching to reduce the egress data. Requests to the database are grouped using `.Include` (see: [docs](https://docs.ravendb.net/7.1/client-api/session/loading-entities#load-with-includes))"
 				/>
 			</div>
 		</div>
