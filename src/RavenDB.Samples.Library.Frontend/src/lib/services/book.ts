@@ -28,5 +28,5 @@ export async function getBookById(id: string): Promise<Book> {
  * @throws Error if the API fails
  */
 export async function getHomeBooks(): Promise<Book[]> {
-	return callApi<Book[]>(`/books/home`);
+	return callApi<Book[]>(`/home/books`);
 }

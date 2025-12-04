@@ -89,7 +89,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     }
     
     [Function(nameof(HomeBooks))]
-    public async Task<IActionResult> HomeBooks([HttpTrigger("get", Route = "books/home")] HttpRequest req)
+    public async Task<IActionResult> HomeBooks([HttpTrigger("get", Route = "home/books")] HttpRequest req)
     {
         const int count = 8;
         
