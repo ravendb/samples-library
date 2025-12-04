@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
+	import DOMPurify from 'isomorphic-dompurify';
 
 	interface Props {
 		contextText?: string;
@@ -30,14 +30,14 @@
 		{#if contextText}
 			<div class="tip-section tip-context">
 				<h3 class="tip-heading">Library Tip</h3>
-				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with DOMPurify -->
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with isomorphic-dompurify -->
 				<div class="tip-text">{@html contextHtml}</div>
 			</div>
 		{/if}
 		{#if ravendbText}
 			<div class="tip-section tip-ravendb">
 				<h3 class="tip-heading">RavenDB Tip</h3>
-				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with DOMPurify -->
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML is sanitized with isomorphic-dompurify -->
 				<div class="tip-text">{@html ravendbHtml}</div>
 			</div>
 		{/if}
