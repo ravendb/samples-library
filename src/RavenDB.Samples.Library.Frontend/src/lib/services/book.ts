@@ -21,3 +21,12 @@ export interface Author {
 export async function getBookById(id: string): Promise<Book> {
 	return callApi<Book>(`/books/${id}`);
 }
+
+/**
+ * Fetches random books for the home page from the API.
+ * @returns An array of books with their authors
+ * @throws Error if the API fails
+ */
+export async function getHomeBooks(): Promise<Book[]> {
+	return callApi<Book[]>(`/books/home`);
+}
