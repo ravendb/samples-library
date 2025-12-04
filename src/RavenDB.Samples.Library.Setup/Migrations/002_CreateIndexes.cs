@@ -12,6 +12,7 @@ public sealed class CreateIndexes : Migration
         new GlobalSearchIndex(),
         new BorrowedBooksByUserIdIndex(),
         new BooksByAuthor(),
+        new BookCopyAvailabilityIndex()
     };
     
     public override void Up()

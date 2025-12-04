@@ -19,20 +19,31 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     [Function(nameof(BooksGetById))]
     public async Task<IActionResult> BooksGetById([HttpTrigger("get", Route = "books/{id}")] HttpRequest req, string id)
     {
+        var bookId = Book.BuildId(id);
+
+        // Use a query against the map-reduce index
+        var lazyAvailability = session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
+            .Where(availability => availability.BookId == bookId)
+            .LazilyAsync();
+
         // Fetch Author using the Include method. This will result in a single round trip to server
         var book = await session
             .Include<Book>(b => b.AuthorId)
-            .LoadAsync<Book>(Book.BuildId(id));
+            .LoadAsync<Book>(bookId);
 
         if (book == null)
             return new NotFoundResult();
 
         var author = await session.LoadAsync<Author>(book.AuthorId);
 
+        var availability = (await lazyAvailability.Value).Single();
+
         var result = new JsonResult(
             new
             {
-                book.Id, book.Title, Author = author
+                book.Id, book.Title,
+                Author = author,
+                Availability = new { availability.Available, availability.Total }
             });
         
         return req.TryCachePublicly(result, session, author, book);
