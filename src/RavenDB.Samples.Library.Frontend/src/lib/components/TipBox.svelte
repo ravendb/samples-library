@@ -11,13 +11,13 @@
 	<div class="tip-box">
 		{#if contextText}
 			<div class="tip-section tip-context">
-				<h3 class="tip-heading">About This App</h3>
+				<h3 class="tip-heading">Library Tip</h3>
 				<p class="tip-text">{contextText}</p>
 			</div>
 		{/if}
 		{#if ravendbText}
 			<div class="tip-section tip-ravendb">
-				<h3 class="tip-heading">RavenDB Features</h3>
+				<h3 class="tip-heading">RavenDB Tip</h3>
 				<p class="tip-text">{ravendbText}</p>
 			</div>
 		{/if}

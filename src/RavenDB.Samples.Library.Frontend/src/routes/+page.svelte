@@ -32,14 +32,11 @@
 					<img src="{image}" alt="A Raven in a library" class="image-cover" />
 				</div>
 				<h1 class="hero-title">Library of Ravens</h1>
-				<p class="hero-description">
-					Welcome to our collection. Discover books, explore knowledge, and find your next great read.
-				</p>
 			</div>
 			<div class="hero-right">
 				<TipBox 
-					contextText="Welcome to the Library of Ravens. You can borrow some books and bring them back."
-					ravendbText="This application uses RavenDB as the main store. It integrates with Azure Storage Queues and leverages caching and query capabilities provided by RavenDB"
+					contextText="In Library of Ravens, you can borrow books and bring them back. We already created your virtual profile. Click on books, search them, borrow them. Enjoy!"
+					ravendbText="This Library uses RavenDB extensively. It integrates with Azure Storage Queues, leverages caching, and query capabilities provided by RavenDB."
 				/>
 			</div>
 		</div>
