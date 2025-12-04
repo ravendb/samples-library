@@ -88,7 +88,7 @@
 							<span class="meta-value">{book.id}</span>
 						</p>
 						{#if book.author}
-							<p class="meta-meta">
+							<p class="meta-row">
 								<span class="meta-label">Author:</span>
 								<a
 									href={resolve(`/authors/${book.author.id.replace('Authors/', '')}`)}
