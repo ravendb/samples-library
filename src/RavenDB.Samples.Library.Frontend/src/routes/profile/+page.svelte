@@ -92,6 +92,7 @@
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-6);
+		height: 100%;
 	}
 
 	.profile-avatar {

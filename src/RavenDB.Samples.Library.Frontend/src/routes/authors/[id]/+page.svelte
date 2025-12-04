@@ -133,6 +133,7 @@
 		display: flex;
 		gap: var(--spacing-6);
 		align-items: center;
+		height: 100%;
 	}
 
 	.author-avatar {

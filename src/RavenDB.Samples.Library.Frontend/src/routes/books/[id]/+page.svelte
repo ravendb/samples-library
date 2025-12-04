@@ -113,6 +113,7 @@
 	.book-card {
 		display: flex;
 		gap: var(--spacing-6);
+		height: 100%;
 	}
 
 	.book-cover {
