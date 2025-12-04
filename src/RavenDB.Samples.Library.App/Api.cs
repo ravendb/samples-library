@@ -87,6 +87,29 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
 
         return req.TryCachePublicly(new JsonResult(results), stats);
     }
+    
+    [Function(nameof(HomeBooks))]
+    public async Task<IActionResult> HomeBooks([HttpTrigger("get", Route = "books/home")] HttpRequest req)
+    {
+        const int count = 8;
+        
+        var books = await session.Query<Book>()
+            .Include(b => b.AuthorId) // Include the author so that further loads of authors do not issue requests to the server.
+            .Customize(customize => customize.RandomOrdering())
+            .Take(count)
+            .ToArrayAsync();
+
+        var results = new List<object>(count);
+        foreach (var book in books)
+        {
+            // These loads will not issue requests to the server, they are already prefetched with Include above.
+            var author = await session.LoadAsync<Author>(book.AuthorId);
+            results.Add(new { book.Id, book.Title, Author = author });
+        }
+
+        // Don't cache the home books. They are randomized.
+        return new JsonResult(results);
+    }
 
     [Function(nameof(Migrate))]
     public async Task<IActionResult> Migrate([HttpTrigger("post", Route = "migrate")] HttpRequest req)
