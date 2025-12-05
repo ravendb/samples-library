@@ -31,13 +31,24 @@ public class UserApi(IAsyncDocumentSession session)
         
         var borrowedBooks = await session.Query<UserBook>()
             .Include(x => x.BookId)
-            .Where(x => x.UserId == userId)
+            .Where(x => x.UserId == userId && x.Returned == null)
             .ToArrayAsync();
 
         var bookIds = borrowedBooks.Select(x => x.BookId).ToArray();
         var books = await session.LoadAsync<Book>(bookIds);
 
-        return GetProfile(user, books.Values);
+        var now = DateTime.UtcNow;
+        var borrowedBooksWithDetails = borrowedBooks
+            .Where(ub => books.ContainsKey(ub.BookId))
+            .Select(ub => new
+            {
+                Id = ub.Id,
+                Title = books[ub.BookId].Title,
+                Overdue = ub.DueDate < now
+            })
+            .ToArray();
+
+        return GetProfile(user, borrowedBooksWithDetails);
     }
 
     [Function(nameof(NotificationsGet))]
@@ -94,7 +105,55 @@ public class UserApi(IAsyncDocumentSession session)
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
-    private static JsonResult GetProfile(User user, IEnumerable<Book> books)
+    [Function(nameof(ReturnBook))]
+    public async Task<IActionResult> ReturnBook([HttpTrigger("post", Route = "user/return/{id}")] HttpRequest req, string id)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+
+        var userBookId = id;
+        if (!userBookId.StartsWith("UserBooks/", StringComparison.OrdinalIgnoreCase))
+        {
+            userBookId = $"UserBooks/{id}";
+        }
+
+        var userBook = await session.LoadAsync<UserBook>(userBookId);
+
+        if (userBook == null)
+        {
+            return new NotFoundResult();
+        }
+
+        // Verify the book belongs to the user
+        if (userBook.UserId != userId)
+        {
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
+        }
+
+        // Check if already returned
+        if (userBook.Returned != null)
+        {
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        }
+
+        // Mark as returned
+        userBook.Returned = DateTime.UtcNow;
+
+        // Update book copy status to available
+        var bookCopy = await session.LoadAsync<BookCopy>(userBook.BookCopyId);
+        if (bookCopy != null)
+        {
+            bookCopy.Status = BookCopyStatus.Available;
+        }
+
+        await session.SaveChangesAsync();
+
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
+    private static JsonResult GetProfile(User user, IEnumerable<object> books)
     {
         return new JsonResult(new
         {

@@ -28,6 +28,11 @@ public class UserBook
     public DateTime Borrowed { get; set; }
 
     /// <summary>
+    /// The date when the book is due to be returned.
+    /// </summary>
+    public DateTime DueDate { get; set; }
+
+    /// <summary>
     /// The date when the book was returned. Null if not yet returned.
     /// </summary>
     public DateTime? Returned { get; set; }

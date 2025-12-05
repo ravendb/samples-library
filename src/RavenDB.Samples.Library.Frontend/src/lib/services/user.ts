@@ -1,14 +1,14 @@
 import { callApi } from '$lib/api';
 
-export interface Book {
+export interface BorrowedBook {
 	id: string;
 	title: string;
-	authorId: string;
+	overdue: boolean;
 }
 
 export interface UserProfile {
 	id: string;
-	borrowed: Book[];
+	borrowed: BorrowedBook[];
 }
 
 export interface Notification {
@@ -43,5 +43,18 @@ export async function deleteNotification(id: string): Promise<void> {
 
 	await callApi<void>(`/user/notifications/${id}`, {
 		method: 'DELETE'
+	});
+}
+
+/**
+ * Returns a borrowed book by its ID.
+ * @param id - The UserBook ID to return
+ */
+export async function returnBook(id: string): Promise<void> {
+	// Normalize the identifier first
+	id = id.replace('UserBooks/', '');
+
+	await callApi<void>(`/user/return/${id}`, {
+		method: 'POST'
 	});
 }
