@@ -40,7 +40,7 @@ public class UserApi(IAsyncDocumentSession session)
         return GetProfile(user, books.Values);
     }
 
-    [Function(nameof(UserGet))]
+    [Function(nameof(NotificationsGet))]
     public async Task<IActionResult> NotificationsGet([HttpTrigger("get", Route = "user/notifications")] HttpRequest req)
     {
         if (!TryGetUserId(req, out var userId))
@@ -64,6 +64,34 @@ public class UserApi(IAsyncDocumentSession session)
             .ToArrayAsync();
 
         return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text }));
+    }
+
+    [Function(nameof(NotificationDelete))]
+    public async Task<IActionResult> NotificationDelete([HttpTrigger("delete", Route = "user/notifications/{id}")] HttpRequest req, string id)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+
+        var notificationId = Notification.BuildId(id);
+        var notification = await session.LoadAsync<Notification>(notificationId);
+
+        if (notification == null)
+        {
+            return new NotFoundResult();
+        }
+
+        // Verify the notification belongs to the user
+        if (notification.UserId != userId)
+        {
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
+        }
+
+        session.Delete(notification);
+        await session.SaveChangesAsync();
+
+        return new OkResult();
     }
 
     private static JsonResult GetProfile(User user, IEnumerable<Book> books)

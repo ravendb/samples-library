@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { getUserProfile } from './user';
+import { getUserProfile, getNotifications, deleteNotification } from './user';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -57,6 +57,73 @@ describe('user service', () => {
 			});
 
 			await expect(getUserProfile()).rejects.toThrow('API error: 401');
+		});
+	});
+
+	describe('getNotifications', () => {
+		it('should fetch notifications from correct endpoint', async () => {
+			const mockNotifications = [
+				{ id: 'Notifications/1', text: 'Test notification 1' },
+				{ id: 'Notifications/2', text: 'Test notification 2' }
+			];
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockNotifications
+			});
+
+			const result = await getNotifications();
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('/api/user/notifications'),
+				expect.objectContaining({
+					headers: expect.objectContaining({
+						'X-User-Id': 'test-user-id'
+					})
+				})
+			);
+			expect(result).toEqual(mockNotifications);
+		});
+
+		it('should throw error on non-ok response', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 500
+			});
+
+			await expect(getNotifications()).rejects.toThrow('API error: 500');
+		});
+	});
+
+	describe('deleteNotification', () => {
+		it('should delete notification with correct endpoint and method', async () => {
+			const notificationId = 'Notifications/123';
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({})
+			});
+
+			await deleteNotification(notificationId);
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining(`/api/user/notifications/${notificationId}`),
+				expect.objectContaining({
+					method: 'DELETE',
+					headers: expect.objectContaining({
+						'X-User-Id': 'test-user-id'
+					})
+				})
+			);
+		});
+
+		it('should throw error on non-ok response', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 403
+			});
+
+			await expect(deleteNotification('Notifications/123')).rejects.toThrow('API error: 403');
 		});
 	});
 });
