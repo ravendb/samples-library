@@ -160,9 +160,9 @@
 		align-items: center;
 		gap: var(--spacing-1);
 		padding: var(--spacing-1) var(--spacing-2);
-		background: var(--color-gray-100);
+		background: var(--color-blue-100);
 		border-radius: var(--radius-sm);
-		color: var(--color-gray-700);
+		color: var(--color-blue-600);
 		text-decoration: none;
 		font-size: var(--font-size-sm);
 		font-weight: 500;
@@ -170,8 +170,8 @@
 	}
 
 	.notification-link:hover {
-		background: var(--color-gray-200);
-		color: var(--color-gray-900);
+		background: var(--color-blue-600);
+		color: var(--color-white);
 	}
 
 	.notification-delete {
