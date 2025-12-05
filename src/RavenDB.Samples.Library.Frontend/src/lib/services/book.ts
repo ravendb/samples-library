@@ -34,3 +34,23 @@ export async function getBookById(id: string): Promise<Book> {
 export async function getHomeBooks(): Promise<Book[]> {
 	return callApi<Book[]>(`/home/books`);
 }
+
+export interface BorrowResponse {
+	success: boolean;
+	bookId: string;
+	borrowedFrom: string;
+	borrowedTo: string;
+}
+
+/**
+ * Borrows a book for the current user.
+ * @param id - The book ID (e.g., "123" for "Books/123")
+ * @returns The borrow response with borrow dates
+ * @throws Error with status 403 if there's a concurrency error (book already borrowed)
+ * @throws Error with status 404 if no copies are available
+ */
+export async function borrowBook(id: string): Promise<BorrowResponse> {
+	return callApi<BorrowResponse>(`/user/books/borrow/${id}`, {
+		method: 'POST'
+	});
+}

@@ -94,6 +94,67 @@ public class UserApi(IAsyncDocumentSession session)
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
+    [Function(nameof(BorrowBook))]
+    public async Task<IActionResult> BorrowBook([HttpTrigger("post", Route = "user/books/borrow/{id}")] HttpRequest req, string id)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+
+        var bookId = Book.BuildId(id);
+
+        // Ensure user exists
+        var (_, user) = await TryCreateUser(userId);
+
+        // Find an available copy of the book
+        var availableCopy = await session.Query<BookCopy>()
+            .Where(copy => copy.BookId == bookId && copy.Status == BookCopyStatus.Available)
+            .FirstOrDefaultAsync();
+
+        if (availableCopy == null)
+        {
+            return new StatusCodeResult(StatusCodes.Status404NotFound);
+        }
+
+        // Update the copy status to borrowed
+        availableCopy.Status = BookCopyStatus.Borrowed;
+
+        // Create the UserBook record
+        var borrowedFrom = DateTime.UtcNow;
+        var borrowedTo = borrowedFrom.AddDays(14); // 2 weeks borrow period
+
+        var userBook = new UserBook
+        {
+            Id = $"UserBooks/{Guid.NewGuid()}",
+            UserId = userId,
+            BookCopyId = availableCopy.Id,
+            BookId = bookId,
+            Borrowed = borrowedFrom,
+            Returned = null
+        };
+
+        await session.StoreAsync(userBook);
+
+        try
+        {
+            await session.SaveChangesAsync();
+            
+            return new JsonResult(new
+            {
+                Success = true,
+                BookId = bookId,
+                BorrowedFrom = borrowedFrom,
+                BorrowedTo = borrowedTo
+            });
+        }
+        catch (Raven.Client.Exceptions.ConcurrencyException)
+        {
+            // Another user borrowed the last copy concurrently
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
+        }
+    }
+
     private static JsonResult GetProfile(User user, IEnumerable<Book> books)
     {
         return new JsonResult(new

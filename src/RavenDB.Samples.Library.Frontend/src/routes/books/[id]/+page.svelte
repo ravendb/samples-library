@@ -1,15 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
-	import { getBookById, type Book } from '$lib/services/book';
+	import { getBookById, borrowBook, type Book } from '$lib/services/book';
 	import TipBox from '$lib/components/TipBox.svelte';
 
 	let book = $state<Book | null>(null);
 	let loading = $state(true);
 	let notFound = $state(false);
 	let error = $state<string | null>(null);
-	let showBorrowedPopup = $state(false);
+	let borrowing = $state(false);
+	let showBorrowPopup = $state(false);
+	let borrowPopupType = $state<'success' | 'error' | 'concurrency'>('success');
+	let borrowDays = $state(0);
 	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(async () => {
@@ -39,12 +43,43 @@
 		}
 	});
 
-	function handleBorrow() {
-		showBorrowedPopup = true;
-		popupTimeoutId = setTimeout(() => {
-			showBorrowedPopup = false;
-			popupTimeoutId = null;
-		}, 2000);
+	async function handleBorrow() {
+		if (!book || borrowing) return;
+
+		borrowing = true;
+
+		try {
+			const bookId = book.id.replace('Books/', '');
+			const response = await borrowBook(bookId);
+
+			// Calculate borrow duration in days
+			const borrowedFrom = new Date(response.borrowedFrom);
+			const borrowedTo = new Date(response.borrowedTo);
+			borrowDays = Math.ceil((borrowedTo.getTime() - borrowedFrom.getTime()) / (1000 * 60 * 60 * 24));
+
+			borrowPopupType = 'success';
+			showBorrowPopup = true;
+		} catch (e) {
+			if (e instanceof Error && e.message.includes('403')) {
+				borrowPopupType = 'concurrency';
+			} else {
+				borrowPopupType = 'error';
+			}
+			showBorrowPopup = true;
+		} finally {
+			borrowing = false;
+		}
+	}
+
+	function handlePopupOk() {
+		showBorrowPopup = false;
+		if (borrowPopupType === 'success') {
+			goto(resolve('/profile'));
+		}
+	}
+
+	function handlePopupClose() {
+		showBorrowPopup = false;
 	}
 </script>
 
@@ -104,7 +139,9 @@
 								>
 							</p>
 							{#if book.availability.available > 0}
-								<button class="btn-borrow" onclick={handleBorrow}> Borrow </button>
+								<button class="btn-borrow" onclick={handleBorrow} disabled={borrowing}>
+									{borrowing ? 'Borrowing...' : 'Borrow'}
+								</button>
 							{/if}
 						{/if}
 					</div>
@@ -121,10 +158,28 @@
 	{/if}
 </div>
 
-{#if showBorrowedPopup}
+{#if showBorrowPopup}
 	<div class="popup-overlay">
 		<div class="popup">
-			<p>Borrowed</p>
+			{#if borrowPopupType === 'success'}
+				<h2 class="popup-title">Book Borrowed Successfully!</h2>
+				<p class="popup-message">
+					You have borrowed this book for {borrowDays} days.
+				</p>
+				<button class="btn-popup-ok" onclick={handlePopupOk}>OK</button>
+			{:else if borrowPopupType === 'concurrency'}
+				<h2 class="popup-title">Unable to Borrow</h2>
+				<p class="popup-message">
+					Someone else just borrowed the last copy. Please try again.
+				</p>
+				<button class="btn-popup-ok" onclick={handlePopupClose}>Close</button>
+			{:else}
+				<h2 class="popup-title">Error</h2>
+				<p class="popup-message">
+					Failed to borrow the book. Please try again later.
+				</p>
+				<button class="btn-popup-ok" onclick={handlePopupClose}>Close</button>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -177,8 +232,13 @@
 		transition: background 0.15s;
 	}
 
-	.btn-borrow:hover {
+	.btn-borrow:hover:not(:disabled) {
 		background: var(--color-blue-700);
+	}
+
+	.btn-borrow:disabled {
+		background: var(--color-gray-400);
+		cursor: not-allowed;
 	}
 
 	.popup-overlay {
@@ -190,7 +250,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.3);
+		background: rgba(0, 0, 0, 0.5);
 		z-index: 100;
 	}
 
@@ -199,13 +259,38 @@
 		padding: var(--spacing-6) var(--spacing-8);
 		border-radius: var(--radius-lg);
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		max-width: 400px;
+		text-align: center;
 	}
 
-	.popup p {
-		margin: 0;
-		font-size: var(--font-size-lg);
+	.popup-title {
+		margin: 0 0 var(--spacing-4) 0;
+		font-size: var(--font-size-xl);
 		font-weight: 600;
 		color: var(--color-gray-900);
+	}
+
+	.popup-message {
+		margin: 0 0 var(--spacing-6) 0;
+		font-size: var(--font-size-base);
+		color: var(--color-gray-700);
+		line-height: 1.5;
+	}
+
+	.btn-popup-ok {
+		padding: var(--spacing-2) var(--spacing-6);
+		background: var(--color-blue-600);
+		color: var(--color-white);
+		border: none;
+		border-radius: var(--radius-md);
+		font-size: var(--font-size-base);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background 0.15s;
+	}
+
+	.btn-popup-ok:hover {
+		background: var(--color-blue-700);
 	}
 
 	@media (max-width: 799px) {
