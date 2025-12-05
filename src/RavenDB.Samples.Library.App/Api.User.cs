@@ -25,18 +25,38 @@ public class UserApi(IAsyncDocumentSession session)
         if (created)
         {
             // A user has no books, if it was just created.
-            return GetProfile(user, []);   
+            return new JsonResult(new
+            {
+                user.Id,
+                Borrowed = Array.Empty<object>()
+            });
         }
         
         var borrowedBooks = await session.Query<BorrowedBook>()
             .Include(x => x.BookId)
-            .Where(x => x.UserId == userId)
+            .Where(x => x.UserId == userId && x.ReturnedOn == null)
             .ToArrayAsync();
 
-        var bookIds = borrowedBooks.Select(x => x.BookId).ToArray();
-        var books = await session.LoadAsync<Book>(bookIds);
+        var borrowed = new List<object>(borrowedBooks.Length);
 
-        return GetProfile(user, books.Values);
+        foreach (var borrowedBook in borrowedBooks)
+        {
+            var book = await session.LoadAsync<Book>(borrowedBook.BookId);
+
+            borrowed.Add(
+                new
+                {
+                    Id = borrowedBook.Id,
+                    Overdue = borrowedBook.ReturnedOn > DateTimeOffset.Now,
+                    Title = book.Title,
+                });
+        }
+
+        return new JsonResult(new
+        {
+            user.Id,
+            Borrowed = borrowed
+        });
     }
 
     [Function(nameof(NotificationsGet))]
@@ -140,15 +160,6 @@ public class UserApi(IAsyncDocumentSession session)
         return new CreatedResult($"user/borrowedbooks/{borrowed.Id}", borrowed);
     }
     
-    private static JsonResult GetProfile(User user, IEnumerable<Book> books)
-    {
-        return new JsonResult(new
-        {
-            Id = user.Id,
-            Borrowed = books.ToArray()
-        });
-    }
-
     private async Task<(bool created, User user)> TryCreateUser(string userId)
     {
         var lazyBook = session.Query<Book>().Customize(customize => customize.RandomOrdering()).Take(1).LazilyAsync();

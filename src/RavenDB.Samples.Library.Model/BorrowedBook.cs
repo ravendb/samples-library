@@ -36,4 +36,5 @@ public class BorrowedBook : IRoot
     /// </summary>
     public DateTimeOffset BorrowedTo { get; set; }
     
+    public DateTimeOffset? ReturnedOn { get; set; }
 }
