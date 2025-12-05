@@ -14,6 +14,7 @@ export interface UserProfile {
 export interface Notification {
 	id: string;
 	text: string;
+	referencedItemId?: string;
 }
 
 /**

@@ -1,12 +1,18 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { onMount, onDestroy } from 'svelte';
 	import { getNotifications, deleteNotification, type Notification } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
+	import { idToLink } from '$lib/utils/links';
 
 	let notifications = $state<Notification[]>([]);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let refreshInterval: ReturnType<typeof setInterval> | null = null;
+
+	function resolveLink(link: string): string {
+		return `${base}${link}`;
+	}
 
 	async function loadNotifications() {
 		try {
@@ -62,7 +68,16 @@
 					<ul class="card notifications-list">
 						{#each notifications as notification (notification.id)}
 							<li class="notification-item">
-								<span class="notification-text">{notification.text}</span>
+								<div class="notification-content">
+									<span class="notification-text">{notification.text}</span>
+									{#if notification.referencedItemId}
+										{@const link = idToLink(notification.referencedItemId)}
+										{#if link}
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+											<a href={resolveLink(link)} class="notification-link">View →</a>
+										{/if}
+									{/if}
+								</div>
 								<button
 									class="notification-delete"
 									onclick={() => handleDeleteNotification(notification.id)}
@@ -128,8 +143,34 @@
 		border-bottom: none;
 	}
 
-	.notification-text {
+	.notification-content {
 		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-3);
+		flex-wrap: wrap;
+	}
+
+	.notification-text {
+		color: var(--color-gray-900);
+	}
+
+	.notification-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-1);
+		padding: var(--spacing-1) var(--spacing-2);
+		background: var(--color-gray-100);
+		border-radius: var(--radius-sm);
+		color: var(--color-gray-700);
+		text-decoration: none;
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		transition: all 0.2s;
+	}
+
+	.notification-link:hover {
+		background: var(--color-gray-200);
 		color: var(--color-gray-900);
 	}
 
