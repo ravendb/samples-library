@@ -5,7 +5,6 @@ using Microsoft.Azure.Functions.Worker;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using RavenDB.Samples.Library.Model;
-using RavenDB.Samples.Library.Model.Indexes;
 
 namespace RavenDB.Samples.Library.App;
 
@@ -29,7 +28,7 @@ public class UserApi(IAsyncDocumentSession session)
             return GetProfile(user, []);   
         }
         
-        var borrowedBooks = await session.Query<UserBook>()
+        var borrowedBooks = await session.Query<BorrowedBook>()
             .Include(x => x.BookId)
             .Where(x => x.UserId == userId)
             .ToArrayAsync();
@@ -94,6 +93,53 @@ public class UserApi(IAsyncDocumentSession session)
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
+    [Function(nameof(UserBookBorrowPost))]
+    private async Task<IActionResult> UserBookBorrowPost([HttpTrigger("post", Route = "user/books/borrow/{id}")] HttpRequest req, string id)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+
+        // For high concurrent usage rate, this wouldn't work. We'd need to have and we'd need to have a way of better scaling it.
+        // At the same time, we might use retrying.
+        // If that was a physical book delivered to a desk, a scan of the book copy id would be sufficent. Nobody can hold the same book copy at the same time. 
+        var availableCopies = await session.Query<BookCopy>()
+            .Where(copy => copy.BookId == id && copy.Status == BookCopyStatus.Available)
+            .Take(1)
+            .ToArrayAsync();
+
+        if (availableCopies.Length == 0)
+            return new NotFoundResult();
+
+        var copy = availableCopies.Single();
+        
+        session.Advanced.UseOptimisticConcurrency = true;
+        
+        copy.Status = BookCopyStatus.Borrowed;
+
+        var borrowed = new BorrowedBook
+        {
+            BookCopyId = copy.Id, BookId = copy.BookId, UserId = userId,
+            BorrowedFrom = DateTimeOffset.Now,
+            BorrowedTo = DateTimeOffset.Now + BorrowedBook.BorrowFor
+        };
+        
+        await session.StoreAsync(borrowed);
+
+        try
+        {
+            await session.SaveChangesAsync();
+        }
+        catch
+        {
+            // Can't save due to concurrency issue. Return conflict
+            return new ConflictResult();
+        }
+        
+        return new CreatedResult($"user/borrowedbooks/{borrowed.Id}", borrowed);
+    }
+    
     private static JsonResult GetProfile(User user, IEnumerable<Book> books)
     {
         return new JsonResult(new
