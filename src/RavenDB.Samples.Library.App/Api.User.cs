@@ -105,6 +105,7 @@ public class UserApi(IAsyncDocumentSession session)
 
     private async Task<(bool created, User user)> TryCreateUser(string userId)
     {
+        var lazyBook = session.Query<Book>().Customize(customize => customize.RandomOrdering()).Take(1).LazilyAsync();
         var user = await session.LoadAsync<User>(userId);
 
         if (user != null) 
@@ -112,7 +113,8 @@ public class UserApi(IAsyncDocumentSession session)
         
         user = new User { Id = userId };
         await session.StoreAsync(user);
-        await session.StoreAsync(new Notification { UserId = userId, Text = "Welcome in the Library of Ravens! 💙", Id = Notification.GetNewId() });
+        var book = (await lazyBook.Value).Single();
+        await session.StoreAsync(new Notification { UserId = userId, Text = "Welcome in the Library of Ravens! 💙 Check out this random book!", Id = Notification.GetNewId(), ReferencedItemId = book.Id});
         await session.SaveChangesAsync();
             
         return (true, user);
