@@ -19,21 +19,6 @@
 				<div class="error-image-container">
 					<img src={image} alt="A Raven in a library" class="image-cover" />
 				</div>
-				<h1 class="error-title">
-					{#if is404}
-						404 - Page Not Found
-					{:else}
-						{status} - Error
-					{/if}
-				</h1>
-				<p class="error-message">
-					{#if is404}
-						The page you're looking for doesn't exist.
-					{:else}
-						Something went wrong. Please try again later.
-					{/if}
-				</p>
-				<a href={resolve('/')} class="link-primary error-link">← Back to Home</a>
 			</div>
 			<div class="error-right">
 				{#if is404}
@@ -49,6 +34,23 @@
 				{/if}
 			</div>
 		</div>
+		<div class="error-text">
+			<h1 class="error-title">
+				{#if is404}
+					404 - Page Not Found
+				{:else}
+					{status} - Error
+				{/if}
+			</h1>
+			<p class="error-message">
+				{#if is404}
+					The page you're looking for doesn't exist.
+				{:else}
+					Something went wrong. Please try again later.
+				{/if}
+			</p>
+			<a href={resolve('/')} class="link-primary error-link">← Back to Home</a>
+		</div>
 	</div>
 </div>
 
@@ -60,6 +62,7 @@
 	.error-content {
 		display: flex;
 		gap: var(--spacing-6);
+		margin-bottom: var(--spacing-6);
 	}
 
 	.error-left {
@@ -67,7 +70,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		text-align: center;
+		justify-content: center;
 	}
 
 	.error-right {
@@ -80,10 +83,16 @@
 		width: 100%;
 		max-width: 256px;
 		aspect-ratio: 1;
-		margin-bottom: var(--spacing-6);
 		border-radius: var(--radius-lg);
 		overflow: hidden;
 		background: var(--color-gray-100);
+	}
+
+	.error-text {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
 	}
 
 	.error-title {
