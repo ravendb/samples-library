@@ -37,6 +37,9 @@ export async function getNotifications(): Promise<Notification[]> {
  * @param id - The notification ID to delete
  */
 export async function deleteNotification(id: string): Promise<void> {
+	// Normalize the identifier first
+	id = id.replace("Notifications/", "");
+	
 	await callApi<void>(`/user/notifications/${id}`, {
 		method: 'DELETE'
 	});

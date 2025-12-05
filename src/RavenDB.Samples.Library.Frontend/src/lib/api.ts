@@ -45,6 +45,9 @@ export async function callApi<T>(route: string, options?: RequestInit): Promise<
 	if (!response.ok) {
 		throw new Error(`API error: ${response.status}`);
 	}
-
-	return response.json();
+	
+	if (response.status === 200)
+		return response.json();
+	
+	return {} as T;
 }

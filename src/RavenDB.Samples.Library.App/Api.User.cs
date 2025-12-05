@@ -91,7 +91,7 @@ public class UserApi(IAsyncDocumentSession session)
         session.Delete(notification);
         await session.SaveChangesAsync();
 
-        return new OkResult();
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
     private static JsonResult GetProfile(User user, IEnumerable<Book> books)
