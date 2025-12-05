@@ -48,6 +48,12 @@
 		</div>
 
 		<nav class="topbar-right">
+			<a href={resolve('/notifications')} class="bell-link" aria-label="Notifications">
+				<svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+					<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+					<path d="M13.73 21a2 2 0 0 1-3.46 0" />
+				</svg>
+			</a>
 			<a href={resolve('/profile')} class="user-link">
 				{#if avatarUrl}
 					<img src={avatarUrl} alt="User avatar" class="user-avatar" />
@@ -88,6 +94,7 @@
 	.topbar-right {
 		display: flex;
 		align-items: center;
+		gap: var(--spacing-4);
 	}
 
 	.logo {
@@ -140,6 +147,29 @@
 		font-size: var(--font-size-xs);
 		color: var(--color-gray-500);
 		font-family: monospace;
+	}
+
+	.bell-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		text-decoration: none;
+		color: var(--color-gray-600);
+		transition: all 0.15s;
+		border-radius: var(--radius-md);
+	}
+
+	.bell-link:hover {
+		background: var(--color-gray-100);
+		color: var(--color-gray-900);
+	}
+
+	.bell-icon {
+		width: 20px;
+		height: 20px;
+		stroke-width: 2;
 	}
 
 	.user-link {
