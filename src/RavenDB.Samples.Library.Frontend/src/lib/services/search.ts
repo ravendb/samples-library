@@ -1,4 +1,5 @@
 import { callApi } from '$lib/api';
+import { idToLink } from '$lib/utils/links';
 
 export interface SearchResult {
 	id: string;
@@ -32,7 +33,7 @@ function transformApiResult(result: ApiSearchResult): SearchResult {
 	}
 
 	// Convert "Books/123" to "/books/123" or "Authors/123" to "/authors/123"
-	const link = '/' + id.toLowerCase();
+	const link = idToLink(id) ?? '';
 
 	return {
 		id,
