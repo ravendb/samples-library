@@ -48,7 +48,7 @@ public class UserApi(IAsyncDocumentSession session)
             return new UnauthorizedResult();
         }
         
-        var (created, user) = await TryCreateUser(userId);
+        var (created, _) = await TryCreateUser(userId);
 
         if (created)
         {
@@ -112,6 +112,7 @@ public class UserApi(IAsyncDocumentSession session)
         
         user = new User { Id = userId };
         await session.StoreAsync(user);
+        await session.StoreAsync(new Notification { UserId = userId, Text = "Welcome in the Library of Ravens! 💙", Id = Notification.GetNewId() });
         await session.SaveChangesAsync();
             
         return (true, user);
