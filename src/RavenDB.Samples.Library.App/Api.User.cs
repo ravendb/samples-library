@@ -105,7 +105,7 @@ public class UserApi(IAsyncDocumentSession session)
         var bookId = Book.BuildId(id);
 
         // Ensure user exists
-        var (_, user) = await TryCreateUser(userId);
+        await TryCreateUser(userId);
 
         // Find an available copy of the book
         var availableCopy = await session.Query<BookCopy>()

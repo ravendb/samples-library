@@ -60,6 +60,7 @@
 			borrowPopupType = 'success';
 			showBorrowPopup = true;
 		} catch (e) {
+			// Check if it's a concurrency error (403)
 			if (e instanceof Error && e.message.includes('403')) {
 				borrowPopupType = 'concurrency';
 			} else {
