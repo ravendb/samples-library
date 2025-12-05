@@ -29,7 +29,7 @@ public class UserApi(IAsyncDocumentSession session)
             return GetProfile(user, []);   
         }
         
-        var borrowedBooks = await session.Query<UserBook, BorrowedBooksByUserIdIndex>()
+        var borrowedBooks = await session.Query<UserBook>()
             .Include(x => x.BookId)
             .Where(x => x.UserId == userId)
             .ToArrayAsync();

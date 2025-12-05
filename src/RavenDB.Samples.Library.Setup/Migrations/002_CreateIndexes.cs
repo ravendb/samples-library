@@ -10,7 +10,6 @@ public sealed class CreateIndexes : Migration
     private static readonly IAbstractIndexCreationTask[] Indexes =
     {
         new GlobalSearchIndex(),
-        new BorrowedBooksByUserIdIndex(),
         new BooksByAuthor(),
         new BookCopyAvailabilityIndex()
     };
