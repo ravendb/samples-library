@@ -85,6 +85,24 @@ describe('user service', () => {
 			expect(result).toEqual(mockNotifications);
 		});
 
+		it('should handle notifications with referencedItemId', async () => {
+			const mockNotifications = [
+				{ id: 'Notifications/1', text: 'Test notification 1', referencedItemId: 'Books/123' },
+				{ id: 'Notifications/2', text: 'Test notification 2' }
+			];
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockNotifications
+			});
+
+			const result = await getNotifications();
+
+			expect(result).toEqual(mockNotifications);
+			expect(result[0].referencedItemId).toBe('Books/123');
+			expect(result[1].referencedItemId).toBeUndefined();
+		});
+
 		it('should throw error on non-ok response', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
