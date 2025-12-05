@@ -63,7 +63,7 @@ public class UserApi(IAsyncDocumentSession session)
             .Take(max)
             .ToArrayAsync();
 
-        return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text }));
+        return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text, notification.ReferencedItemId }));
     }
 
     [Function(nameof(NotificationDelete))]
