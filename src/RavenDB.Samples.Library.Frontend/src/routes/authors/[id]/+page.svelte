@@ -84,7 +84,7 @@
 			<div class="author-right">
 				<TipBox
 					contextText="The author details page. Provides information about the author, including the list of their books. Here, you can easily navigate to a book of your interest if you only know the author."
-					ravendbText="As books and authors change very infrequently, we cache them heavily, by leveraging `http` caching and `ETags`. On the server side, `.LazilyAsync` (see: [docs](https://docs.ravendb.net/7.1/client-api/session/querying/how-to-perform-queries-lazily)), to minimize the number of calls to the `RavenDB` server." 
+					ravendbText="As books and authors change very infrequently, we cache them heavily, by leveraging `http` caching and `ETags`. On the server side, `.LazilyAsync` (see: [docs](https://docs.ravendb.net/7.1/client-api/session/querying/how-to-perform-queries-lazily)), to minimize the number of calls to the `RavenDB` server."
 				/>
 			</div>
 		</div>

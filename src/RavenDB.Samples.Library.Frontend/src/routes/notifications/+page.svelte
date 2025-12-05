@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		getNotifications,
-		deleteNotification,
-		type Notification
-	} from '$lib/services/user';
+	import { getNotifications, deleteNotification, type Notification } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 
 	let notifications = $state<Notification[]>([]);

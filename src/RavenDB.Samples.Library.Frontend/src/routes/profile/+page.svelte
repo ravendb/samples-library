@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
-	import {
-		getUserProfile,
-		type UserProfile
-	} from '$lib/services/user';
+	import { getUserProfile, type UserProfile } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 
 	let userId = $state('');
