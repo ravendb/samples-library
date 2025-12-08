@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
 	import { getUserProfile, returnBook, type UserProfile } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 	import { updateNotificationCount } from '$lib/stores/notifications';
+	import { idToLink } from '$lib/utils/links';
 
 	let userId = $state('');
 	let avatarUrl = $state('');
@@ -106,13 +108,20 @@
 			<p class="card card-centered error-state">{error}</p>
 		</section>
 	{:else if userProfile}
-		{#if overdueBooks.length > 0}
+			{#if overdueBooks.length > 0}
 			<section class="borrowed-section">
 				<h2 class="heading-section overdue-heading">Overdue Books</h2>
 				<ul class="card borrowed-list">
 					{#each overdueBooks as book (book.id)}
+						{@const link = idToLink(book.bookId)}
 						<li class="borrowed-item overdue-item">
-							<span class="book-title">{book.title}</span>
+							{#if link}
+								<a href={resolve(link)} class="book-title book-title-link">
+									{book.title}
+								</a>
+							{:else}
+								<span class="book-title">{book.title}</span>
+							{/if}
 							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
@@ -127,8 +136,15 @@
 				<h2 class="heading-section">Active Books</h2>
 				<ul class="card borrowed-list">
 					{#each activeBooks as book (book.id)}
+						{@const link = idToLink(book.bookId)}
 						<li class="borrowed-item">
-							<span class="book-title">{book.title}</span>
+							{#if link}
+								<a href={resolve(link)} class="book-title book-title-link">
+									{book.title}
+								</a>
+							{:else}
+								<span class="book-title">{book.title}</span>
+							{/if}
 							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
@@ -235,6 +251,16 @@
 		font-weight: 500;
 		color: var(--color-gray-900);
 		flex: 1;
+	}
+
+	.book-title-link {
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.book-title-link:hover {
+		color: var(--color-blue-600, #2563eb);
+		text-decoration: underline;
 	}
 
 	.return-button {
