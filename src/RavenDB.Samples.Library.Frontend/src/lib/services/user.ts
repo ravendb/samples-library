@@ -1,5 +1,4 @@
-import { callApi, apiUrl } from '$lib/api';
-import { getUserId } from '$lib/utils/userId';
+import { callApi } from '$lib/api';
 
 export interface BorrowedBook {
 	id: string;
@@ -76,18 +75,11 @@ export async function returnBook(id: string): Promise<void> {
  * @throws Error with status 409 on concurrency conflict, or other status codes for other errors
  */
 export async function borrowBook(bookId: string): Promise<BorrowBookResponse> {
-	const response = await fetch(apiUrl('/user/books'), {
+	return callApi<BorrowBookResponse>('/user/books', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
-			'X-User-Id': getUserId()
+			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({ bookId })
 	});
-
-	if (!response.ok) {
-		throw new Error(`API error: ${response.status}`);
-	}
-
-	return response.json();
 }
