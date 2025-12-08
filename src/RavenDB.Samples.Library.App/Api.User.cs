@@ -113,14 +113,60 @@ public class UserApi(IAsyncDocumentSession session)
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
-    [Function(nameof(UserBookBorrowPost))]
-    private async Task<IActionResult> UserBookBorrowPost([HttpTrigger("post", Route = "user/books/borrow/{id}")] HttpRequest req, string id)
+    [Function(nameof(UserBookReturn))]
+    public async Task<IActionResult> UserBookReturn([HttpTrigger("post", Route = "user/books/{id}/return")] HttpRequest req, string id)
     {
         if (!TryGetUserId(req, out var userId))
         {
             return new UnauthorizedResult();
         }
 
+        var userBookId = BorrowedBook.BuildId(id);
+        var borrowed = await session.LoadAsync<BorrowedBook>(userBookId);
+
+        if (borrowed == null)
+        {
+            return new NotFoundResult();
+        }
+
+        // Verify the book belongs to the user
+        if (borrowed.UserId != userId)
+        {
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
+        }
+
+        // Check if already returned
+        if (borrowed.ReturnedOn != null)
+        {
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        }
+
+        // Concurrency checks
+        session.Advanced.UseOptimisticConcurrency = true;
+        
+        // Mark as returned
+        borrowed.ReturnedOn = DateTimeOffset.UtcNow;
+
+        // Update book copy status to available
+        var bookCopy = await session.LoadAsync<BookCopy>(borrowed.BookCopyId);
+        bookCopy.Status = BookCopyStatus.Available;
+
+        await session.SaveChangesAsync();
+
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
+    [Function(nameof(UserBookBorrowPost))]
+    private async Task<IActionResult> UserBookBorrowPost([HttpTrigger("post", Route = "user/books")] HttpRequest req)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+
+        var payload = await req.ReadFromJsonAsync<BorrowPayload>();
+        var id = Book.BuildId(payload.BookId);
+        
         // For high concurrent usage rate, this wouldn't work. We'd need to have and we'd need to have a way of better scaling it.
         // At the same time, we might use retrying.
         // If that was a physical book delivered to a desk, a scan of the book copy id would be sufficent. Nobody can hold the same book copy at the same time. 
@@ -136,8 +182,10 @@ public class UserApi(IAsyncDocumentSession session)
         
         session.Advanced.UseOptimisticConcurrency = true;
         
+        // Mark the copy a borrowed.
         copy.Status = BookCopyStatus.Borrowed;
 
+        // Capture the state of the borrowed book as a document
         var borrowed = new BorrowedBook
         {
             BookCopyId = copy.Id, BookId = copy.BookId, UserId = userId,
@@ -157,7 +205,12 @@ public class UserApi(IAsyncDocumentSession session)
             return new ConflictResult();
         }
         
-        return new CreatedResult($"user/borrowedbooks/{borrowed.Id}", borrowed);
+        return new CreatedResult($"user/books/{borrowed.Id}", borrowed);
+    }
+    
+    private class BorrowPayload 
+    {
+        public string BookId { get; set; }
     }
     
     private async Task<(bool created, User user)> TryCreateUser(string userId)
