@@ -2,6 +2,7 @@ import { callApi } from '$lib/api';
 
 export interface BorrowedBook {
 	id: string;
+	bookId: string;
 	title: string;
 	overdue: boolean;
 }

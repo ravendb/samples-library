@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
 	import { getUserProfile, returnBook, type UserProfile } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
@@ -112,7 +113,12 @@
 				<ul class="card borrowed-list">
 					{#each overdueBooks as book (book.id)}
 						<li class="borrowed-item overdue-item">
-							<span class="book-title">{book.title}</span>
+							<a
+								href={resolve(`/books/${book.bookId.replace('Books/', '')}`)}
+								class="book-title book-title-link"
+							>
+								{book.title}
+							</a>
 							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
@@ -128,7 +134,12 @@
 				<ul class="card borrowed-list">
 					{#each activeBooks as book (book.id)}
 						<li class="borrowed-item">
-							<span class="book-title">{book.title}</span>
+							<a
+								href={resolve(`/books/${book.bookId.replace('Books/', '')}`)}
+								class="book-title book-title-link"
+							>
+								{book.title}
+							</a>
 							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
@@ -235,6 +246,16 @@
 		font-weight: 500;
 		color: var(--color-gray-900);
 		flex: 1;
+	}
+
+	.book-title-link {
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.book-title-link:hover {
+		color: var(--color-blue-600, #2563eb);
+		text-decoration: underline;
 	}
 
 	.return-button {
