@@ -5,6 +5,8 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
 	import { borrowBook } from '$lib/services/user';
+	import { ApiError } from '$lib/api';
+	import { formatDuration } from '$lib/utils/duration';
 	import TipBox from '$lib/components/TipBox.svelte';
 
 	let book = $state<Book | null>(null);
@@ -50,26 +52,17 @@
 		error = null;
 
 		try {
-			const result = await borrowBook(book.id.replace('Books/', ''));
+			const result = await borrowBook(book.id);
 
 			// Calculate borrow duration in a human-readable format
 			const borrowedFrom = new Date(result.borrowedFrom);
 			const borrowedTo = new Date(result.borrowedTo);
-			const durationMs = borrowedTo.getTime() - borrowedFrom.getTime();
-			const durationSeconds = Math.floor(durationMs / 1000);
-
-			let durationText = '';
-			if (durationSeconds < 60) {
-				durationText = `${durationSeconds} seconds`;
-			} else {
-				const minutes = Math.floor(durationSeconds / 60);
-				durationText = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
-			}
+			const durationText = formatDuration(borrowedFrom, borrowedTo);
 
 			borrowedMessage = `You have successfully borrowed this book for ${durationText}!`;
 			showBorrowedPopup = true;
 		} catch (e) {
-			if (e instanceof Error && e.message.includes('409')) {
+			if (e instanceof ApiError && e.status === 409) {
 				borrowedMessage = 'Someone else just borrowed the last copy. Please try again!';
 				showBorrowedPopup = true;
 			} else {

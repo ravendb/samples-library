@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { getUserProfile, getNotifications, deleteNotification, borrowBook } from './user';
+import { ApiError } from '$lib/api';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -50,13 +51,19 @@ describe('user service', () => {
 			expect(result).toEqual(mockResponse);
 		});
 
-		it('should throw error on non-ok response', async () => {
+		it('should throw ApiError on non-ok response', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 401
 			});
 
-			await expect(getUserProfile()).rejects.toThrow('API error: 401');
+			try {
+				await getUserProfile();
+				expect.fail('Should have thrown an error');
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError);
+				expect((e as ApiError).status).toBe(401);
+			}
 		});
 	});
 
@@ -103,13 +110,19 @@ describe('user service', () => {
 			expect(result[1].referencedItemId).toBeUndefined();
 		});
 
-		it('should throw error on non-ok response', async () => {
+		it('should throw ApiError on non-ok response', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 500
 			});
 
-			await expect(getNotifications()).rejects.toThrow('API error: 500');
+			try {
+				await getNotifications();
+				expect.fail('Should have thrown an error');
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError);
+				expect((e as ApiError).status).toBe(500);
+			}
 		});
 	});
 
@@ -135,13 +148,19 @@ describe('user service', () => {
 			);
 		});
 
-		it('should throw error on non-ok response', async () => {
+		it('should throw ApiError on non-ok response', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 403
 			});
 
-			await expect(deleteNotification('Notifications/123')).rejects.toThrow('API error: 403');
+			try {
+				await deleteNotification('Notifications/123');
+				expect.fail('Should have thrown an error');
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError);
+				expect((e as ApiError).status).toBe(403);
+			}
 		});
 	});
 
@@ -178,22 +197,34 @@ describe('user service', () => {
 			expect(result).toEqual(mockResponse);
 		});
 
-		it('should throw error on concurrency conflict (409)', async () => {
+		it('should throw ApiError on concurrency conflict (409)', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 409
 			});
 
-			await expect(borrowBook('123')).rejects.toThrow('API error: 409');
+			try {
+				await borrowBook('123');
+				expect.fail('Should have thrown an error');
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError);
+				expect((e as ApiError).status).toBe(409);
+			}
 		});
 
-		it('should throw error on not found (404)', async () => {
+		it('should throw ApiError on not found (404)', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 404
 			});
 
-			await expect(borrowBook('123')).rejects.toThrow('API error: 404');
+			try {
+				await borrowBook('123');
+				expect.fail('Should have thrown an error');
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError);
+				expect((e as ApiError).status).toBe(404);
+			}
 		});
 	});
 });

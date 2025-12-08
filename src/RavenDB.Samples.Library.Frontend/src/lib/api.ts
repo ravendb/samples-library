@@ -29,7 +29,7 @@ export function apiUrl(route: string, baseUrl: string = API_BASE_URL): string {
  * @param route - The API route (e.g., '/user/profile')
  * @param options - Optional fetch options (method, body, etc.)
  * @returns The decoded JSON response
- * @throws Error if the response is not ok
+ * @throws ApiError if the response is not ok
  */
 export async function callApi<T>(route: string, options?: RequestInit): Promise<T> {
 	const userId = getUserId();
@@ -43,10 +43,20 @@ export async function callApi<T>(route: string, options?: RequestInit): Promise<
 	});
 
 	if (!response.ok) {
-		throw new Error(`API error: ${response.status}`);
+		throw new ApiError(response.status);
 	}
 
 	if (response.status === 200 || response.status === 201) return response.json();
 
 	return {} as T;
+}
+
+/**
+ * Error thrown by API calls when the response is not ok.
+ */
+export class ApiError extends Error {
+	constructor(public readonly status: number) {
+		super(`API error: ${status}`);
+		this.name = 'ApiError';
+	}
 }

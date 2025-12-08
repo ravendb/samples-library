@@ -70,11 +70,14 @@ export async function returnBook(id: string): Promise<void> {
 
 /**
  * Borrows a book by its ID.
- * @param bookId - The book ID to borrow
+ * @param id - The book ID to borrow (with or without 'Books/' prefix)
  * @returns The borrowed book details including borrowedFrom and borrowedTo
  * @throws Error with status 409 on concurrency conflict, or other status codes for other errors
  */
-export async function borrowBook(bookId: string): Promise<BorrowBookResponse> {
+export async function borrowBook(id: string): Promise<BorrowBookResponse> {
+	// Normalize the identifier first
+	const bookId = id.replace('Books/', '');
+
 	return callApi<BorrowBookResponse>('/user/books', {
 		method: 'POST',
 		headers: {
