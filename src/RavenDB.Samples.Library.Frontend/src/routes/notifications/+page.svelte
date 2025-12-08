@@ -4,6 +4,7 @@
 	import { getNotifications, deleteNotification, type Notification } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 	import { idToLink } from '$lib/utils/links';
+	import { updateNotificationCount } from '$lib/stores/notifications';
 
 	let notifications = $state<Notification[]>([]);
 	let loading = $state(true);
@@ -18,6 +19,8 @@
 		try {
 			error = null;
 			notifications = await getNotifications();
+			// Update the notification count as well
+			await updateNotificationCount();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to load notifications';
 		} finally {
@@ -30,6 +33,8 @@
 			await deleteNotification(notificationId);
 			// Remove the notification from the list
 			notifications = notifications.filter((n) => n.id !== notificationId);
+			// Update the notification count badge
+			await updateNotificationCount();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to delete notification';
 		}

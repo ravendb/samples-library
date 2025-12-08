@@ -3,6 +3,7 @@
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
 	import { getUserProfile, returnBook, type UserProfile } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
+	import { updateNotificationCount } from '$lib/stores/notifications';
 
 	let userId = $state('');
 	let avatarUrl = $state('');
@@ -13,12 +14,8 @@
 	let returningBookId = $state<string | null>(null);
 	let isReturning = $state(false);
 
-	let overdueBooks = $derived(
-		userProfile?.borrowed.filter(book => book.overdue) || []
-	);
-	let activeBooks = $derived(
-		userProfile?.borrowed.filter(book => !book.overdue) || []
-	);
+	let overdueBooks = $derived(userProfile?.borrowed.filter((book) => book.overdue) || []);
+	let activeBooks = $derived(userProfile?.borrowed.filter((book) => !book.overdue) || []);
 
 	async function loadProfile() {
 		loading = true;
@@ -45,7 +42,7 @@
 
 	async function confirmReturn() {
 		if (!returningBookId || isReturning) return;
-		
+
 		isReturning = true;
 		try {
 			await returnBook(returningBookId);
@@ -53,6 +50,8 @@
 			returningBookId = null;
 			// Reload profile data
 			await loadProfile();
+			// Update notification count after returning a book
+			await updateNotificationCount();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to return book';
 		} finally {
@@ -114,10 +113,7 @@
 					{#each overdueBooks as book (book.id)}
 						<li class="borrowed-item overdue-item">
 							<span class="book-title">{book.title}</span>
-							<button 
-								class="return-button" 
-								onclick={() => handleReturnClick(book.id)}
-							>
+							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
 						</li>
@@ -133,10 +129,7 @@
 					{#each activeBooks as book (book.id)}
 						<li class="borrowed-item">
 							<span class="book-title">{book.title}</span>
-							<button 
-								class="return-button" 
-								onclick={() => handleReturnClick(book.id)}
-							>
+							<button class="return-button" onclick={() => handleReturnClick(book.id)}>
 								Return
 							</button>
 						</li>
@@ -158,11 +151,7 @@
 	<div class="modal-backdrop" onclick={closeModal}>
 		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 			<p class="modal-text">Returned</p>
-			<button 
-				class="modal-button" 
-				onclick={confirmReturn}
-				disabled={isReturning}
-			>
+			<button class="modal-button" onclick={confirmReturn} disabled={isReturning}>
 				{isReturning ? 'Returning...' : 'OK'}
 			</button>
 		</div>

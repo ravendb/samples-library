@@ -3,7 +3,9 @@
 	import { resolve } from '$app/paths';
 	import { onMount, onDestroy } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
+	import { borrowBook } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
+	import { updateNotificationCount } from '$lib/stores/notifications';
 
 	let book = $state<Book | null>(null);
 	let loading = $state(true);
@@ -11,6 +13,7 @@
 	let error = $state<string | null>(null);
 	let showBorrowedPopup = $state(false);
 	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
+	let isBorrowing = $state(false);
 
 	onMount(async () => {
 		const id = page.params.id;
@@ -39,12 +42,24 @@
 		}
 	});
 
-	function handleBorrow() {
-		showBorrowedPopup = true;
-		popupTimeoutId = setTimeout(() => {
-			showBorrowedPopup = false;
-			popupTimeoutId = null;
-		}, 2000);
+	async function handleBorrow() {
+		if (!book || isBorrowing) return;
+
+		isBorrowing = true;
+		try {
+			await borrowBook(book.id.replace('Books/', ''));
+			showBorrowedPopup = true;
+			popupTimeoutId = setTimeout(() => {
+				showBorrowedPopup = false;
+				popupTimeoutId = null;
+			}, 2000);
+			// Update notification count after borrowing a book
+			await updateNotificationCount();
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to borrow book';
+		} finally {
+			isBorrowing = false;
+		}
 	}
 </script>
 
@@ -104,7 +119,9 @@
 								>
 							</p>
 							{#if book.availability.available > 0}
-								<button class="btn-borrow" onclick={handleBorrow}> Borrow </button>
+								<button class="btn-borrow" onclick={handleBorrow} disabled={isBorrowing}>
+									{isBorrowing ? 'Borrowing...' : 'Borrow'}
+								</button>
 							{/if}
 						{/if}
 					</div>
@@ -179,6 +196,11 @@
 
 	.btn-borrow:hover {
 		background: var(--color-blue-700);
+	}
+
+	.btn-borrow:disabled {
+		background: var(--color-gray-400);
+		cursor: not-allowed;
 	}
 
 	.popup-overlay {

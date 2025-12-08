@@ -17,6 +17,10 @@ export interface Notification {
 	referencedItemId?: string;
 }
 
+export interface NotificationCount {
+	count: number;
+}
+
 /**
  * Fetches the user profile from the API.
  * @returns The user profile including borrowed books
@@ -31,6 +35,14 @@ export async function getUserProfile(): Promise<UserProfile> {
  */
 export async function getNotifications(): Promise<Notification[]> {
 	return callApi<Notification[]>('/user/notifications');
+}
+
+/**
+ * Fetches the count of user's notifications from the API.
+ * @returns The notification count
+ */
+export async function getNotificationCount(): Promise<NotificationCount> {
+	return callApi<NotificationCount>('/user/notifications/count');
 }
 
 /**
@@ -56,5 +68,19 @@ export async function returnBook(id: string): Promise<void> {
 
 	await callApi<void>(`/user/return/${id}`, {
 		method: 'POST'
+	});
+}
+
+/**
+ * Borrows a book by its ID.
+ * @param bookId - The book ID to borrow
+ */
+export async function borrowBook(bookId: string): Promise<void> {
+	await callApi<void>('/user/books', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ bookId })
 	});
 }
