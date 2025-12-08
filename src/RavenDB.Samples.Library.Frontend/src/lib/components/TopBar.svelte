@@ -210,8 +210,8 @@
 		position: absolute;
 		top: 6px;
 		right: 6px;
-		width: 8px;
-		height: 8px;
+		width: 12px;
+		height: 12px;
 		background: var(--color-red-600);
 		border: 2px solid var(--color-white);
 		border-radius: var(--radius-full);

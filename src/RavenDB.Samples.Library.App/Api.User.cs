@@ -59,7 +59,7 @@ public class UserApi(IAsyncDocumentSession session)
         });
     }
 
-    [Function(nameof(NotificationsCount))]
+    [Function(nameof(NotificationsGet))]
     public async Task<IActionResult> NotificationsGet([HttpTrigger("get", Route = "user/notifications")] HttpRequest req)
     {
         if (!TryGetUserId(req, out var userId))
@@ -173,7 +173,7 @@ public class UserApi(IAsyncDocumentSession session)
     }
 
     [Function(nameof(UserBookBorrowPost))]
-    private async Task<IActionResult> UserBookBorrowPost([HttpTrigger("post", Route = "user/books")] HttpRequest req)
+    public async Task<IActionResult> UserBookBorrowPost([HttpTrigger("post", Route = "user/books")] HttpRequest req)
     {
         if (!TryGetUserId(req, out var userId))
         {
