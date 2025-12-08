@@ -59,7 +59,7 @@ public class UserApi(IAsyncDocumentSession session)
         });
     }
 
-    [Function(nameof(NotificationsGet))]
+    [Function(nameof(NotificationsCount))]
     public async Task<IActionResult> NotificationsGet([HttpTrigger("get", Route = "user/notifications")] HttpRequest req)
     {
         if (!TryGetUserId(req, out var userId))
@@ -83,6 +83,22 @@ public class UserApi(IAsyncDocumentSession session)
             .ToArrayAsync();
 
         return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text, notification.ReferencedItemId }));
+    }
+    
+    [Function(nameof(NotificationsCount))]
+    public async Task<IActionResult> NotificationsCount([HttpTrigger("get", Route = "user/notifications/count")] HttpRequest req)
+    {
+        if (!TryGetUserId(req, out var userId))
+        {
+            return new UnauthorizedResult();
+        }
+        
+        // Notifications count
+        var count = await session.Query<Notification>()
+            .Where(x => x.UserId == userId)
+            .CountAsync();
+
+        return new JsonResult(new { Count = count });
     }
 
     [Function(nameof(NotificationDelete))]
