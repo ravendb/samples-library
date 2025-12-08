@@ -15,7 +15,7 @@
 	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
 	let isBorrowing = $state(false);
 
-	onMount(async () => {
+	async function loadBook() {
 		const id = page.params.id;
 
 		if (id === undefined) {
@@ -34,6 +34,10 @@
 				loading = false;
 			}
 		}
+	}
+
+	onMount(async () => {
+		await loadBook();
 	});
 
 	onDestroy(() => {
@@ -56,10 +60,7 @@
 			// Update notification count after borrowing a book
 			await updateNotificationCount();
 			// Refresh book details to show updated availability
-			const id = page.params.id;
-			if (id !== undefined) {
-				book = await getBookById(id);
-			}
+			await loadBook();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to borrow book';
 		} finally {
