@@ -47,7 +47,7 @@ public class UserApi(IAsyncDocumentSession session)
                 new
                 {
                     Id = borrowedBook.Id,
-                    Overdue = borrowedBook.ReturnedOn > DateTimeOffset.Now,
+                    Overdue = borrowedBook.BorrowedTo < DateTimeOffset.Now,
                     Title = book.Title,
                 });
         }
