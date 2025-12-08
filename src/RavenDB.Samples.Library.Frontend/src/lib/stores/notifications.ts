@@ -16,7 +16,7 @@ export async function updateNotificationCount(): Promise<void> {
 		const result = await getNotificationCount();
 		notificationCount.set(result.count);
 	} catch (error) {
-		console.error('Failed to fetch notification count:', error);
+		console.error('Failed to fetch notification count from API:', error);
 		// Don't update the count on error to keep the last known state
 	}
 }
