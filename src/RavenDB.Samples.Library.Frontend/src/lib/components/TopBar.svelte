@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
+	import { getUserIdWithInfo, getUserAvatarUrl } from '$lib/utils/userId';
 	import SearchModal from './SearchModal.svelte';
 	import {
 		notificationCount,
@@ -9,6 +9,7 @@
 		stopNotificationPolling,
 		updateNotificationCount
 	} from '$lib/stores/notifications';
+	import { getUserProfile } from '$lib/services/user';
 	import { page } from '$app/stores';
 
 	let userId = $state('');
@@ -22,10 +23,20 @@
 		count = value;
 	});
 
-	onMount(() => {
-		userId = getUserId();
+	onMount(async () => {
+		const userIdInfo = getUserIdWithInfo();
+		userId = userIdInfo.userId;
 		avatarUrl = getUserAvatarUrl(userId);
 		isMac = navigator.platform.toLowerCase().includes('mac');
+
+		// If this is a new user, fetch the profile first to ensure user is created
+		if (userIdInfo.isNewUser) {
+			try {
+				await getUserProfile();
+			} catch (error) {
+				console.error('Failed to fetch user profile for new user:', error);
+			}
+		}
 
 		// Start polling for notification count
 		startNotificationPolling();
