@@ -19,7 +19,7 @@ public class UserApi(IAsyncDocumentSession session)
         {
             return new UnauthorizedResult();
         }
-        
+
         var (created, user) = await TryCreateUser(userId);
 
         if (created)
@@ -31,7 +31,7 @@ public class UserApi(IAsyncDocumentSession session)
                 Borrowed = Array.Empty<object>()
             });
         }
-        
+
         var borrowedBooks = await session.Query<BorrowedBook>()
             .Include(x => x.BookId)
             .Where(x => x.UserId == userId && x.ReturnedOn == null)
@@ -67,7 +67,7 @@ public class UserApi(IAsyncDocumentSession session)
         {
             return new UnauthorizedResult();
         }
-        
+
         var (created, _) = await TryCreateUser(userId);
 
         if (created)
@@ -85,7 +85,7 @@ public class UserApi(IAsyncDocumentSession session)
 
         return new JsonResult(notifications.Select(notification => new { notification.Id, notification.Text, notification.ReferencedItemId }));
     }
-    
+
     [Function(nameof(NotificationsCount))]
     public async Task<IActionResult> NotificationsCount([HttpTrigger("get", Route = "user/notifications/count")] HttpRequest req)
     {
@@ -93,7 +93,7 @@ public class UserApi(IAsyncDocumentSession session)
         {
             return new UnauthorizedResult();
         }
-        
+
         // Notifications count
         var count = await session.Query<Notification>()
             .Where(x => x.UserId == userId)
@@ -160,7 +160,7 @@ public class UserApi(IAsyncDocumentSession session)
 
         // Concurrency checks
         session.Advanced.UseOptimisticConcurrency = true;
-        
+
         // Mark as returned
         borrowed.ReturnedOn = DateTimeOffset.UtcNow;
 
@@ -183,7 +183,7 @@ public class UserApi(IAsyncDocumentSession session)
 
         var payload = await req.ReadFromJsonAsync<BorrowPayload>();
         var id = Book.BuildId(payload.BookId);
-        
+
         // For high concurrent usage rate, this wouldn't work. We'd need to have and we'd need to have a way of better scaling it.
         // At the same time, we might use retrying.
         // If that was a physical book delivered to a desk, a scan of the book copy id would be sufficent. Nobody can hold the same book copy at the same time. 
@@ -196,9 +196,9 @@ public class UserApi(IAsyncDocumentSession session)
             return new NotFoundResult();
 
         var copy = availableCopies.Single();
-        
+
         session.Advanced.UseOptimisticConcurrency = true;
-        
+
         // Mark the copy a borrowed.
         copy.Status = BookCopyStatus.Borrowed;
 
@@ -209,8 +209,10 @@ public class UserApi(IAsyncDocumentSession session)
             BorrowedFrom = DateTimeOffset.Now,
             BorrowedTo = DateTimeOffset.Now + BorrowedBook.BorrowFor
         };
-        
+
         await session.StoreAsync(borrowed);
+
+        ScheduleTimeout(borrowed);
 
         try
         {
@@ -221,39 +223,52 @@ public class UserApi(IAsyncDocumentSession session)
             // Can't save due to concurrency issue. Return conflict
             return new ConflictResult();
         }
-        
+
         return new CreatedResult($"user/books/{borrowed.Id}", borrowed);
     }
-    
-    private class BorrowPayload 
+
+    /// <summary>
+    /// This method uses the refresh feature <see cref="https://docs.ravendb.net/7.1/studio/database/settings/document-refresh"/>
+    /// to schedule a time-related action.
+    /// </summary>
+    private void ScheduleTimeout(BorrowedBook borrowed)
+    {
+        // Set this borrowed book to be refreshed.
+        // The subscription will be used to react to it and send over ETL. 
+        var metadata = session.Advanced.GetMetadataFor(borrowed);
+        metadata[Raven.Client.Constants.Documents.Metadata.Refresh] = borrowed.BorrowedTo.UtcDateTime.ToString("O");
+    }
+
+    private class BorrowPayload
     {
         public string BookId { get; set; }
     }
-    
+
     private async Task<(bool created, User user)> TryCreateUser(string userId)
     {
         var lazyBook = session.Query<Book>().Customize(customize => customize.RandomOrdering()).Take(1).LazilyAsync();
         var user = await session.LoadAsync<User>(userId);
 
-        if (user != null) 
+        if (user != null)
             return (false, user);
-        
+
         user = new User { Id = userId };
         await session.StoreAsync(user);
         var book = (await lazyBook.Value).Single();
-        await session.StoreAsync(new Notification { UserId = userId, Text = "Welcome in the Library of Ravens! 💙 Check out this random book!", Id = Notification.GetNewId(), ReferencedItemId = book.Id});
+        await session.StoreAsync(new Notification
+            { UserId = userId, Text = "Welcome in the Library of Ravens! 💙 Check out this random book!", Id = Notification.GetNewId(), ReferencedItemId = book.Id });
         await session.SaveChangesAsync();
-            
+
         return (true, user);
     }
 
     private static bool TryGetUserId(HttpRequest req, [MaybeNullWhen(false)] out string userId)
     {
-        if (req.Headers.TryGetValue(HeaderUserIdName, out var headerValue) && 
+        if (req.Headers.TryGetValue(HeaderUserIdName, out var headerValue) &&
             !string.IsNullOrWhiteSpace(headerValue))
         {
             var value = headerValue.ToString().Trim();
-            
+
             // Validate that the header value contains only safe characters
             if (value.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_'))
             {

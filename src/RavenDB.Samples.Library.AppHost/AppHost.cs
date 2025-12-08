@@ -1,9 +1,20 @@
+using CommunityToolkit.Aspire.Hosting.RavenDB;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 // RavenDB
 // https://learn.microsoft.com/en-us/dotnet/aspire/community-toolkit/ravendb?tabs=dotnet-cli#hosting-integration
+var license = Environment.GetEnvironmentVariable("RAVEN_LICENSE");
+
+var settings = RavenDBServerSettings.Unsecured();
+if (license != null)
+{
+    // Use the license from the environmental variable
+    settings.WithLicense(license);
+}
+
 var ravenDbServer = builder
-    .AddRavenDB("RavenDB")
+    .AddRavenDB("RavenDB", settings)
     .WithIconName("Database");
 
 const string dbName = "library";
