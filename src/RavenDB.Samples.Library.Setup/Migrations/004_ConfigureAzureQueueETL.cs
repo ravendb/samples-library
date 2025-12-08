@@ -60,10 +60,12 @@ public sealed class ConfigureAzureQueueETL : Migration
                     Collections = { "BorrowedBooks" },
                     Script = @"
                         // Only process borrowed books that have no refresh metadata
-                        // (meaning they haven't been scheduled for timeout yet)
+                        // (meaning they haven't been scheduled for timeout yet, or the timeout has occurred)
                         var metadata = this['@metadata'];
                         if (!metadata['@refresh']) {
                             // Send just the document ID to the queue
+                            // Note: The ETL function name follows the pattern 'loadTo{QueueName}' (camelCase)
+                            // where QueueName is the queue name with the first letter capitalized
                             loadToTimeouts({
                                 Id: id(this)
                             });
@@ -80,8 +82,12 @@ public sealed class ConfigureAzureQueueETL : Migration
 
     public override void Down()
     {
-        // ETL and connection string removal would typically be done manually through RavenDB Studio
-        // or with specific administrative operations. For migrations, we'll leave this as a no-op.
-        // The ETL can be disabled or removed through the RavenDB Studio if needed.
+        // Note: Rolling back ETL configuration requires manual intervention through RavenDB Studio
+        // or administrative operations. Automatic rollback is not implemented to avoid accidental
+        // data loss or misconfiguration. The ETL task and connection string should be manually
+        // disabled or removed if needed.
+        throw new NotSupportedException(
+            "Rolling back Azure Queue ETL configuration is not supported. " +
+            "Please manually remove the ETL task and connection string through RavenDB Studio if needed.");
     }
 }
