@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { getUserProfile, getNotifications, deleteNotification } from './user';
+import { getUserProfile, getNotifications, deleteNotification, returnBook } from './user';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -142,6 +142,54 @@ describe('user service', () => {
 			});
 
 			await expect(deleteNotification('Notifications/123')).rejects.toThrow('API error: 403');
+		});
+	});
+
+	describe('returnBook', () => {
+		it('should return book with correct endpoint and method', async () => {
+			const borrowedBookId = 'BorrowedBooks/123';
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({})
+			});
+
+			await returnBook(borrowedBookId);
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('/api/user/books/123/return'),
+				expect.objectContaining({
+					method: 'POST',
+					headers: expect.objectContaining({
+						'X-User-Id': 'test-user-id'
+					})
+				})
+			);
+		});
+
+		it('should normalize BorrowedBooks prefix', async () => {
+			const borrowedBookId = 'BorrowedBooks/456';
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({})
+			});
+
+			await returnBook(borrowedBookId);
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('/api/user/books/456/return'),
+				expect.any(Object)
+			);
+		});
+
+		it('should throw error on non-ok response', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 403
+			});
+
+			await expect(returnBook('BorrowedBooks/123')).rejects.toThrow('API error: 403');
 		});
 	});
 });

@@ -48,13 +48,13 @@ export async function deleteNotification(id: string): Promise<void> {
 
 /**
  * Returns a borrowed book by its ID.
- * @param id - The UserBook ID to return
+ * @param id - The BorrowedBook ID to return
  */
 export async function returnBook(id: string): Promise<void> {
 	// Normalize the identifier first
-	id = id.replace('UserBooks/', '');
+	id = id.replace('BorrowedBooks/', '');
 
-	await callApi<void>(`/user/return/${id}`, {
+	await callApi<void>(`/user/books/${id}/return`, {
 		method: 'POST'
 	});
 }
