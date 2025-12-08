@@ -3,9 +3,13 @@ namespace RavenDB.Samples.Library.Model;
 /// <summary>
 /// Represents a book borrowed by a user.
 /// </summary>
-public class UserBook
+public class BorrowedBook : IRoot
 {
+    public static readonly TimeSpan BorrowFor =  TimeSpan.FromSeconds(30);
+    
     public string Id { get; set; }
+    
+    public static string BuildId(string value) => $"BorrowedBooks/{value}";
 
     /// <summary>
     /// The user who borrowed the book.
@@ -25,15 +29,12 @@ public class UserBook
     /// <summary>
     /// The date when the book was borrowed.
     /// </summary>
-    public DateTime Borrowed { get; set; }
+    public DateTimeOffset BorrowedFrom { get; set; }
 
     /// <summary>
-    /// The date when the book is due to be returned.
+    /// The date, when the book copy should be returned.
     /// </summary>
-    public DateTime DueDate { get; set; }
-
-    /// <summary>
-    /// The date when the book was returned. Null if not yet returned.
-    /// </summary>
-    public DateTime? Returned { get; set; }
+    public DateTimeOffset BorrowedTo { get; set; }
+    
+    public DateTimeOffset? ReturnedOn { get; set; }
 }
