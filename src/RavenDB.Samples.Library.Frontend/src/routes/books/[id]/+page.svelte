@@ -55,6 +55,11 @@
 			}, 2000);
 			// Update notification count after borrowing a book
 			await updateNotificationCount();
+			// Refresh book details to show updated availability
+			const id = page.params.id;
+			if (id !== undefined) {
+				book = await getBookById(id);
+			}
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to borrow book';
 		} finally {
