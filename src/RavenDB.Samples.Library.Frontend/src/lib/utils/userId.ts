@@ -6,16 +6,7 @@ export interface UserIdInfo {
 }
 
 export function getUserId(): string {
-	if (typeof localStorage === 'undefined') {
-		return generateUUID();
-	}
-
-	let userId = localStorage.getItem(USER_ID_KEY);
-	if (!userId) {
-		userId = generateUUID();
-		localStorage.setItem(USER_ID_KEY, userId);
-	}
-	return userId;
+	return getUserIdWithInfo().userId;
 }
 
 export function getUserIdWithInfo(): UserIdInfo {
