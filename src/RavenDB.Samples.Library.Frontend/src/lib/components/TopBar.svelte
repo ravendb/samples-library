@@ -1,18 +1,48 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { getUserId, getUserAvatarUrl } from '$lib/utils/userId';
 	import SearchModal from './SearchModal.svelte';
+	import {
+		notificationCount,
+		startNotificationPolling,
+		stopNotificationPolling,
+		updateNotificationCount
+	} from '$lib/stores/notifications';
+	import { page } from '$app/stores';
 
 	let userId = $state('');
 	let avatarUrl = $state('');
 	let searchOpen = $state(false);
 	let isMac = $state(false);
 
+	// Subscribe to notification count store
+	let count = $state(0);
+	const unsubscribe = notificationCount.subscribe((value) => {
+		count = value;
+	});
+
 	onMount(() => {
 		userId = getUserId();
 		avatarUrl = getUserAvatarUrl(userId);
 		isMac = navigator.platform.toLowerCase().includes('mac');
+
+		// Start polling for notification count
+		startNotificationPolling();
+	});
+
+	onDestroy(() => {
+		// Clean up polling when component is destroyed
+		stopNotificationPolling();
+		unsubscribe();
+	});
+
+	// Update notification count on page navigation
+	$effect(() => {
+		// Access the page store to trigger on navigation
+		void $page;
+		// Update notification count when navigating between pages
+		void updateNotificationCount();
 	});
 
 	function handleGlobalKeydown(e: KeyboardEvent) {
@@ -53,6 +83,9 @@
 					<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
 					<path d="M13.73 21a2 2 0 0 1-3.46 0" />
 				</svg>
+				{#if count > 0}
+					<span class="notification-badge" aria-label="{count} unread notifications"></span>
+				{/if}
 			</a>
 			<a href={resolve('/profile')} class="user-link">
 				{#if avatarUrl}
@@ -150,6 +183,7 @@
 	}
 
 	.bell-link {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -170,6 +204,18 @@
 		width: 20px;
 		height: 20px;
 		stroke-width: 2;
+	}
+
+	.notification-badge {
+		position: absolute;
+		top: 6px;
+		right: 6px;
+		width: 8px;
+		height: 8px;
+		background: var(--color-red-600);
+		border: 2px solid var(--color-white);
+		border-radius: var(--radius-full);
+		pointer-events: none;
 	}
 
 	.user-link {
