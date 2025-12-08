@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { getUserProfile, getNotifications, deleteNotification } from './user';
+import { getUserProfile, getNotifications, deleteNotification, borrowBook } from './user';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -142,6 +142,58 @@ describe('user service', () => {
 			});
 
 			await expect(deleteNotification('Notifications/123')).rejects.toThrow('API error: 403');
+		});
+	});
+
+	describe('borrowBook', () => {
+		it('should borrow a book with correct endpoint and payload', async () => {
+			const mockResponse = {
+				id: 'BorrowedBooks/1',
+				bookCopyId: 'BookCopies/1',
+				bookId: 'Books/123',
+				userId: 'Users/test-user-id',
+				borrowedFrom: '2025-12-08T10:00:00Z',
+				borrowedTo: '2025-12-08T10:30:00Z'
+			};
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				status: 201,
+				json: async () => mockResponse
+			});
+
+			const result = await borrowBook('123');
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('/api/user/books'),
+				expect.objectContaining({
+					method: 'POST',
+					headers: expect.objectContaining({
+						'Content-Type': 'application/json',
+						'X-User-Id': 'test-user-id'
+					}),
+					body: JSON.stringify({ bookId: '123' })
+				})
+			);
+			expect(result).toEqual(mockResponse);
+		});
+
+		it('should throw error on concurrency conflict (409)', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 409
+			});
+
+			await expect(borrowBook('123')).rejects.toThrow('API error: 409');
+		});
+
+		it('should throw error on not found (404)', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 404
+			});
+
+			await expect(borrowBook('123')).rejects.toThrow('API error: 404');
 		});
 	});
 });

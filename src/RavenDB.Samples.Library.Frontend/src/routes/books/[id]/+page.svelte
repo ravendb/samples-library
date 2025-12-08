@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
 	import { getBookById, type Book } from '$lib/services/book';
+	import { borrowBook } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 
 	let book = $state<Book | null>(null);
@@ -10,7 +12,9 @@
 	let notFound = $state(false);
 	let error = $state<string | null>(null);
 	let showBorrowedPopup = $state(false);
+	let borrowedMessage = $state<string>('');
 	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
+	let isBorrowing = $state(false);
 
 	onMount(async () => {
 		const id = page.params.id;
@@ -39,12 +43,50 @@
 		}
 	});
 
-	function handleBorrow() {
-		showBorrowedPopup = true;
-		popupTimeoutId = setTimeout(() => {
-			showBorrowedPopup = false;
+	async function handleBorrow() {
+		if (!book || isBorrowing) return;
+
+		isBorrowing = true;
+		error = null;
+
+		try {
+			const result = await borrowBook(book.id.replace('Books/', ''));
+
+			// Calculate borrow duration in a human-readable format
+			const borrowedFrom = new Date(result.borrowedFrom);
+			const borrowedTo = new Date(result.borrowedTo);
+			const durationMs = borrowedTo.getTime() - borrowedFrom.getTime();
+			const durationSeconds = Math.floor(durationMs / 1000);
+
+			let durationText = '';
+			if (durationSeconds < 60) {
+				durationText = `${durationSeconds} seconds`;
+			} else {
+				const minutes = Math.floor(durationSeconds / 60);
+				durationText = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+			}
+
+			borrowedMessage = `You have successfully borrowed this book for ${durationText}!`;
+			showBorrowedPopup = true;
+		} catch (e) {
+			if (e instanceof Error && e.message.includes('409')) {
+				borrowedMessage = 'Someone else just borrowed the last copy. Please try again!';
+				showBorrowedPopup = true;
+			} else {
+				error = e instanceof Error ? e.message : 'Failed to borrow book';
+			}
+		} finally {
+			isBorrowing = false;
+		}
+	}
+
+	function handlePopupOk() {
+		showBorrowedPopup = false;
+		if (popupTimeoutId !== null) {
+			clearTimeout(popupTimeoutId);
 			popupTimeoutId = null;
-		}, 2000);
+		}
+		goto(resolve('/profile'));
 	}
 </script>
 
@@ -104,7 +146,9 @@
 								>
 							</p>
 							{#if book.availability.available > 0}
-								<button class="btn-borrow" onclick={handleBorrow}> Borrow </button>
+								<button class="btn-borrow" onclick={handleBorrow} disabled={isBorrowing}>
+									{isBorrowing ? 'Borrowing...' : 'Borrow'}
+								</button>
 							{/if}
 						{/if}
 					</div>
@@ -124,7 +168,8 @@
 {#if showBorrowedPopup}
 	<div class="popup-overlay">
 		<div class="popup">
-			<p>Borrowed</p>
+			<p>{borrowedMessage}</p>
+			<button class="popup-btn" onclick={handlePopupOk}>OK</button>
 		</div>
 	</div>
 {/if}
@@ -177,8 +222,13 @@
 		transition: background 0.15s;
 	}
 
-	.btn-borrow:hover {
+	.btn-borrow:hover:not(:disabled) {
 		background: var(--color-blue-700);
+	}
+
+	.btn-borrow:disabled {
+		background: var(--color-gray-400);
+		cursor: not-allowed;
 	}
 
 	.popup-overlay {
@@ -199,13 +249,31 @@
 		padding: var(--spacing-6) var(--spacing-8);
 		border-radius: var(--radius-lg);
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		max-width: 400px;
+		text-align: center;
 	}
 
 	.popup p {
-		margin: 0;
+		margin: 0 0 var(--spacing-4) 0;
 		font-size: var(--font-size-lg);
 		font-weight: 600;
 		color: var(--color-gray-900);
+	}
+
+	.popup-btn {
+		padding: var(--spacing-2) var(--spacing-6);
+		background: var(--color-blue-600);
+		color: var(--color-white);
+		border: none;
+		border-radius: var(--radius-md);
+		font-size: var(--font-size-base);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background 0.15s;
+	}
+
+	.popup-btn:hover {
+		background: var(--color-blue-700);
 	}
 
 	@media (max-width: 799px) {
