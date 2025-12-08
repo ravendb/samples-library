@@ -59,8 +59,18 @@ public sealed class ConfigureAzureQueueETL : Migration
                     Name = "BorrowedBookToTimeout",
                     Collections = { "BorrowedBooks" },
                     Script = @"
-                        // Only process borrowed books that have no refresh metadata
-                        // (meaning they haven't been scheduled for timeout yet, or the timeout has occurred)
+                        // Check if the borrowed book has no @refresh metadata
+                        // Per requirements: 'if the borrowed book has no refresh, send a message to the Timeouts queue'
+                        // 
+                        // This condition will be true in these scenarios:
+                        // 1. After RavenDB's refresh feature has processed the document at the scheduled time
+                        //    and the @refresh metadata has been cleared
+                        // 2. For any BorrowedBook documents that don't have a refresh scheduled
+                        //
+                        // The typical flow is:
+                        // - Book borrowed → @refresh metadata set to BorrowedTo date
+                        // - RavenDB refresh triggers at scheduled time → document updated
+                        // - @refresh metadata cleared → ETL detects change and sends to queue
                         var metadata = this['@metadata'];
                         if (!metadata['@refresh']) {
                             // Send just the document ID to the queue
