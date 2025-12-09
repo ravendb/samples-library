@@ -2,6 +2,10 @@ using CommunityToolkit.Aspire.Hosting.RavenDB;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Storage
+var storage = builder.AddAzureStorage("storage").RunAsEmulator();
+var queues = storage.AddQueues("queues");
+
 // RavenDB
 // https://learn.microsoft.com/en-us/dotnet/aspire/community-toolkit/ravendb?tabs=dotnet-cli#hosting-integration
 var license = Environment.GetEnvironmentVariable("RAVEN_LICENSE");
@@ -15,16 +19,14 @@ if (license != null)
 
 var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
-    .WithIconName("Database");
+    .WithIconName("Database")
+    .WithReference(queues)
+    .WaitFor(queues);
 
 const string dbName = "library";
 
 var db = ravenDbServer
     .AddDatabase(dbName);
-
-// Storage
-var storage = builder.AddAzureStorage("storage").RunAsEmulator();
-var queues = storage.AddQueues("queues");
 
 const string commandKey = "CommandKey";
 
@@ -33,9 +35,15 @@ var secretKey = builder.AddParameter(commandKey, secret: true);
 // Library App
 var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithHostStorage(storage)
+    
     .WithReference(queues)
+    .WaitFor(queues)
+    
+    .WithEnvironment("BindingConnection", queues.Resource.ConnectionStringExpression)
+    
     .WithReference(db)
     .WaitFor(db)
+    
     .WithEnvironment(commandKey, secretKey)
     .WithHttpCommand(
         path: "/api/migrate",

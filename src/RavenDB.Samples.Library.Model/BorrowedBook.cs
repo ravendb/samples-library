@@ -8,8 +8,6 @@ public class BorrowedBook : IRoot
     public static readonly TimeSpan BorrowFor =  TimeSpan.FromSeconds(30);
     
     public string Id { get; set; }
-    
-    public static string BuildId(string value) => $"BorrowedBooks/{value}";
 
     /// <summary>
     /// The user who borrowed the book.
@@ -35,6 +33,12 @@ public class BorrowedBook : IRoot
     /// The date, when the book copy should be returned.
     /// </summary>
     public DateTimeOffset BorrowedTo { get; set; }
-    
+
     public DateTimeOffset? ReturnedOn { get; set; }
+
+    private const string IdPrefix = "BorrowedBooks";
+    
+    public static string BuildId(string value) => $"{IdPrefix}/{value}";
+
+    public static bool IsIdOf(string id) => id.StartsWith(IdPrefix);
 }
