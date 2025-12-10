@@ -107,11 +107,12 @@
 			</div>
 
 			<div class="search-options">
-				<label class="checkbox-label">
+				<label class="checkbox-label" for="vector-search-checkbox">
 					<input
 						type="checkbox"
+						id="vector-search-checkbox"
 						bind:checked={useVectorSearch}
-						oninput={handleInput}
+						on:input={handleInput}
 						class="vector-checkbox"
 					/>
 					<span class="checkbox-text">Use vector search</span>
