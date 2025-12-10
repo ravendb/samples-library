@@ -36,9 +36,9 @@ public class BorrowedBook : IRoot
 
     public DateTimeOffset? ReturnedOn { get; set; }
 
-    private const string IdPrefix = "BorrowedBooks";
+    public const string CollectionName = "BorrowedBooks";
     
-    public static string BuildId(string value) => $"{IdPrefix}/{value}";
+    public static string BuildId(string value) => $"{CollectionName}/{value}";
 
-    public static bool IsIdOf(string id) => id.StartsWith(IdPrefix);
+    public static bool IsIdOf(string id) => id.StartsWith(CollectionName);
 }

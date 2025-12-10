@@ -2,11 +2,12 @@ using Raven.Client.Documents.Operations.ConnectionStrings;
 using Raven.Client.Documents.Operations.ETL;
 using Raven.Client.Documents.Operations.ETL.Queue;
 using Raven.Migrations;
+using RavenDB.Samples.Library.Model;
 
 namespace RavenDB.Samples.Library.Setup.Migrations;
 
 [Migration(4)]
-public sealed class ConfigureAzureQueueETL : Migration
+public sealed class ConfigureAzureQueueETL(MigrationContext context) : Migration
 {
     private const string ConnectionStringName = "AzureQueueStorage";
     private const string QueueName = "timeouts";
@@ -14,9 +15,7 @@ public sealed class ConfigureAzureQueueETL : Migration
 
     public override void Up()
     {
-        // Get the Azure Storage connection string from environment variables
-        // Aspire injects this as ConnectionStrings__queues
-        var connectionString = Environment.GetEnvironmentVariable("BindingConnection");
+        var connectionString = context.AzureStorageQueuesConnectionStringForRavenETL;
 
         if (string.IsNullOrEmpty(connectionString))
         {
@@ -57,7 +56,7 @@ public sealed class ConfigureAzureQueueETL : Migration
                 new Transformation
                 {
                     Name = "BorrowedBookToTimeout",
-                    Collections = { "BorrowedBooks" },
+                    Collections = { BorrowedBook.CollectionName },
                     Script = @"
                         var metadata = this['@metadata'];
                         if (metadata['@refresh'] == null) {
@@ -66,7 +65,7 @@ public sealed class ConfigureAzureQueueETL : Migration
                             // Note: The ETL function name follows the pattern 'loadTo{QueueName}'
                             // where QueueName is the queue name with the first letter capitalized
                             loadToTimeouts({
-                                Id: id(this)
+                                id: id(this)
                             });
                         }
                     "

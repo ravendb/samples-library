@@ -29,6 +29,11 @@ builder.AddRavenDBClient("library",
         settings.CreateDatabase = true;
     });
 
+
+// TODO: extract from the value under container. As RavenDB is used in a container, the wiring is different from the app.
+var connection = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://storage:10001/devstoreaccount1;";
+builder.Services.AddSingleton(new MigrationContext(connection));
+
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights()

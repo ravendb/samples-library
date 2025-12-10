@@ -39,6 +39,7 @@ var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Librar
     .WithReference(queues)
     .WaitFor(queues)
     
+    // Required to go separately with as the bindings are not wired with the host storage
     .WithEnvironment("BindingConnection", queues.Resource.ConnectionStringExpression)
     
     .WithReference(db)
