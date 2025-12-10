@@ -8,4 +8,6 @@ public class Book : IRoot
     public string Title { get; set; }
 
     public string AuthorId { get; set; }
+    
+    public string? Description { get; set; }
 }

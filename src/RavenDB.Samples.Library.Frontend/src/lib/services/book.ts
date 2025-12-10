@@ -3,6 +3,7 @@ import { callApi } from '$lib/api';
 export interface Book {
 	id: string;
 	title: string;
+	description?: string;
 	author: Author;
 	availability?: {
 		available: number;

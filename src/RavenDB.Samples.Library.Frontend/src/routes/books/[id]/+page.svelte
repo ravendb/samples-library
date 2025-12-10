@@ -130,6 +130,12 @@
 								</button>
 							{/if}
 						{/if}
+						{#if book.description}
+							<div class="book-description">
+								<h2 class="description-heading">Description</h2>
+								<p class="description-text">{book.description}</p>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -207,6 +213,29 @@
 	.btn-borrow:disabled {
 		background: var(--color-gray-400);
 		cursor: not-allowed;
+	}
+
+	.book-description {
+		margin-top: var(--spacing-6);
+		padding-top: var(--spacing-4);
+		border-top: 1px solid var(--color-gray-200);
+	}
+
+	.description-heading {
+		font-size: var(--font-size-lg);
+		font-weight: 600;
+		color: var(--color-gray-900);
+		margin: 0 0 var(--spacing-3) 0;
+	}
+
+	.description-text {
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		color: var(--color-gray-700);
+		margin: 0;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 	}
 
 	.popup-overlay {
