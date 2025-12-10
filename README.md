@@ -36,6 +36,8 @@ If you want to run the application locally, please follow the steps:
 1. Install prerequisites:
    1. [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
    1. [Aspire.dev](https://aspire.dev/get-started/install-cli/)
+   2. [nodejs](https://nodejs.org)
+1. Request a [dev license](https://ravendb.net/license/request/dev-ai-agent-inside) and set it under `RAVEN_LICENSE` env variable
 1. Get the app running by opening `/src/RavenDB.Samples.Library.sln` and starting the `Aspire` `AppHost` project
 
 ## Community & Support
