@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Book } from '$lib/services/book';
+	import { generateShapesAvatar } from '$lib/utils/avatar';
 
 	interface Props {
 		book: Book;
 	}
 
 	let { book }: Props = $props();
+
+	// Generate avatar locally
+	const bookCoverUrl = $derived(generateShapesAvatar(book.id));
 </script>
 
 <div class="book-card">
 	<a href={resolve(`/books/${book.id.replace('Books/', '')}`)} class="book-link">
 		<div class="book-cover">
-			<img
-				src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
-				alt="Book cover for {book.title}"
-				class="image-cover"
-			/>
+			<img src={bookCoverUrl} alt="Book cover for {book.title}" class="image-cover" />
 		</div>
 		<div class="book-info">
 			<h3 class="book-title">{book.title}</h3>

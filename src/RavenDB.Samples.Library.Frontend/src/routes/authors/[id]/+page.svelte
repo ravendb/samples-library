@@ -4,11 +4,16 @@
 	import { onMount } from 'svelte';
 	import { getAuthorById, type Author } from '$lib/services/author';
 	import TipBox from '$lib/components/TipBox.svelte';
+	import { generateAvataaarsAvatar, generateShapesAvatar } from '$lib/utils/avatar';
 
 	let author = $state<Author | null>(null);
 	let loading = $state(true);
 	let notFound = $state(false);
 	let error = $state<string | null>(null);
+
+	// Generate avatars locally
+	const authorAvatarUrl = $derived(author ? generateAvataaarsAvatar(author.id) : '');
+	const getBookCoverUrl = (bookId: string) => generateShapesAvatar(bookId);
 
 	onMount(async () => {
 		const id = page.params.id;
@@ -65,11 +70,7 @@
 			<div class="author-left">
 				<div class="card author-card">
 					<div class="author-avatar avatar-round">
-						<img
-							src="https://api.dicebear.com/9.x/avataaars/svg?seed={encodeURIComponent(author.id)}"
-							alt="Author avatar"
-							class="image-cover"
-						/>
+						<img src={authorAvatarUrl} alt="Author avatar" class="image-cover" />
 					</div>
 					<div class="author-info">
 						<h1 class="heading-primary">{author.firstName} {author.lastName}</h1>
@@ -97,7 +98,7 @@
 						<a href={resolve(`/books/${book.id.replace('Books/', '')}`)} class="book-item">
 							<div class="book-cover-small">
 								<img
-									src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
+									src={getBookCoverUrl(book.id)}
 									alt="Book cover for {book.title}"
 									class="image-cover"
 								/>

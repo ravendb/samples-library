@@ -1,3 +1,5 @@
+import { generateFunEmojiAvatar } from './avatar';
+
 const USER_ID_KEY = 'library_user_id';
 
 export interface UserIdInfo {
@@ -34,5 +36,5 @@ function generateUUID(): string {
 }
 
 export function getUserAvatarUrl(userId: string): string {
-	return `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(userId)}`;
+	return generateFunEmojiAvatar(userId);
 }

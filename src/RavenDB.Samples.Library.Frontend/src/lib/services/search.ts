@@ -1,5 +1,6 @@
 import { callApi } from '$lib/api';
 import { idToLink } from '$lib/utils/links';
+import { generateShapesAvatar, generateAvataaarsAvatar } from '$lib/utils/avatar';
 
 export interface SearchResult {
 	id: string;
@@ -16,7 +17,7 @@ interface ApiSearchResult {
 
 function transformApiResult(result: ApiSearchResult): SearchResult {
 	const id = result.id;
-	const seed = encodeURIComponent(id);
+	const seed = id; // Use the id directly as seed, no need to encode
 	const prefix = id.slice(0, id.indexOf('/'));
 	let type: string = '';
 	let imageUrl: string = '';
@@ -24,11 +25,11 @@ function transformApiResult(result: ApiSearchResult): SearchResult {
 	switch (prefix) {
 		case 'Books':
 			type = 'book';
-			imageUrl = `https://api.dicebear.com/9.x/shapes/svg?seed=${seed}`;
+			imageUrl = generateShapesAvatar(seed);
 			break;
 		case 'Authors':
 			type = 'author';
-			imageUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+			imageUrl = generateAvataaarsAvatar(seed);
 			break;
 	}
 

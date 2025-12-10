@@ -6,6 +6,7 @@
 	import { borrowBook } from '$lib/services/user';
 	import TipBox from '$lib/components/TipBox.svelte';
 	import { updateNotificationCount } from '$lib/stores/notifications';
+	import { generateShapesAvatar } from '$lib/utils/avatar';
 
 	let book = $state<Book | null>(null);
 	let loading = $state(true);
@@ -14,6 +15,9 @@
 	let showBorrowedPopup = $state(false);
 	let popupTimeoutId: ReturnType<typeof setTimeout> | null = null;
 	let isBorrowing = $state(false);
+
+	// Generate book cover locally
+	const bookCoverUrl = $derived(book ? generateShapesAvatar(book.id) : '');
 
 	async function loadBook() {
 		const id = page.params.id;
@@ -96,11 +100,7 @@
 			<div class="book-left">
 				<div class="card book-card">
 					<div class="book-cover">
-						<img
-							src="https://api.dicebear.com/9.x/shapes/svg?seed={encodeURIComponent(book.id)}"
-							alt="Book cover"
-							class="image-cover"
-						/>
+						<img src={bookCoverUrl} alt="Book cover" class="image-cover" />
 					</div>
 					<div class="book-info">
 						<h1 class="heading-primary">{book.title}</h1>

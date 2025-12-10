@@ -39,6 +39,8 @@
 		"vitest-browser-svelte": "^2.0.1"
 	},
 	"dependencies": {
+		"@dicebear/collection": "^9.2.4",
+		"@dicebear/core": "^9.2.4",
 		"isomorphic-dompurify": "^2.33.0",
 		"marked": "^17.0.1"
 	}

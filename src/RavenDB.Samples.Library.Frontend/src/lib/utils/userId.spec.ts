@@ -58,17 +58,16 @@ describe('userId utils', () => {
 	});
 
 	describe('getUserAvatarUrl', () => {
-		it('should return a dicebear URL with the userId', () => {
+		it('should return a data URI with the userId', () => {
 			const userId = 'test-user-123';
 			const avatarUrl = getUserAvatarUrl(userId);
-			expect(avatarUrl).toContain('dicebear.com');
-			expect(avatarUrl).toContain(encodeURIComponent(userId));
+			expect(avatarUrl).toContain('data:image/svg+xml');
 		});
 
-		it('should encode special characters in userId', () => {
+		it('should handle special characters in userId', () => {
 			const userId = 'user@test.com';
 			const avatarUrl = getUserAvatarUrl(userId);
-			expect(avatarUrl).toContain(encodeURIComponent(userId));
+			expect(avatarUrl).toContain('data:image/svg+xml');
 		});
 	});
 });
