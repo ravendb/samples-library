@@ -9,18 +9,29 @@ namespace RavenDB.Samples.Library.App;
 public class Timeouts(IAsyncDocumentSession session, ILogger<Timeouts> logger)
 {
     [Function(nameof(ProcessTimeout))]
-    public void ProcessTimeout([QueueTrigger("timeouts", Connection = "BindingConnection")] CloudEventMessage? msg)
+    public async Task ProcessTimeout([QueueTrigger("timeouts", Connection = "BindingConnection")] CloudEventMessage? msg)
     {
         if (msg?.Data?.Id == null)
         {
-            throw new Exception("The id of the underlying document could't be parsed");
+            throw new Exception("The id of the underlying document couldn't be parsed");
         }
 
         var id = msg.Data.Id;
         
         if (BorrowedBook.IsIdOf(id))
         {
-            logger.LogInformation("Received timeout message: {Message}", id);
+            // BorrowedBook timeout handling: register a notification for the user.
+            var borrowedBook = await session.LoadAsync<BorrowedBook>(id);
+            var book = await session.LoadAsync<Book>(borrowedBook.BookId);
+
+            await session.StoreAsync(new Notification
+            {
+                UserId = borrowedBook.UserId,
+                Text = $"Your book {book.Title} is overdue! Please return it immediately.",
+                Id = Notification.GetNewId(),
+            });
+            
+            await session.SaveChangesAsync();
         }
     }
 }
