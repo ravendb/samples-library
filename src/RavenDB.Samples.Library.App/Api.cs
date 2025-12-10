@@ -42,7 +42,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var result = new JsonResult(
             new
             {
-                book.Id, book.Title,
+                book.Id, book.Title, book.Description,
                 Author = author,
                 Availability = new { availability.Available, availability.Total }
             });
