@@ -130,12 +130,6 @@
 								</button>
 							{/if}
 						{/if}
-						{#if book.description}
-							<div class="book-description">
-								<h2 class="description-heading">Description</h2>
-								<p class="description-text">{book.description}</p>
-							</div>
-						{/if}
 					</div>
 				</div>
 			</div>
@@ -147,6 +141,13 @@
 				/>
 			</div>
 		</div>
+
+		{#if book.description}
+			<div class="card book-description-section">
+				<h2 class="description-heading">Description</h2>
+				<p class="description-text">{book.description}</p>
+			</div>
+		{/if}
 	{/if}
 </div>
 
@@ -215,10 +216,8 @@
 		cursor: not-allowed;
 	}
 
-	.book-description {
+	.book-description-section {
 		margin-top: var(--spacing-6);
-		padding-top: var(--spacing-4);
-		border-top: 1px solid var(--color-gray-200);
 	}
 
 	.description-heading {
