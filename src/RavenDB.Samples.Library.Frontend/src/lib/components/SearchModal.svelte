@@ -112,7 +112,7 @@
 						type="checkbox"
 						id="vector-search-checkbox"
 						bind:checked={useVectorSearch}
-						on:input={handleInput}
+						oninput={handleInput}
 						class="vector-checkbox"
 					/>
 					<span class="checkbox-text">Use vector search</span>
