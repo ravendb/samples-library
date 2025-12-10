@@ -19,6 +19,7 @@ if (license != null)
 
 var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
+    .WithImage("ravendb/ravendb", "7.1-latest")
     .WithIconName("Database")
     .WithReference(queues)
     .WaitFor(queues);
