@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
@@ -22,9 +23,8 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var bookId = Book.BuildId(id);
 
         // Use a query against the map-reduce index
-        var lazyAvailability = session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
-            .Statistics(out var stats)
-            .Where(availability => availability.BookId == bookId)
+        var lazyAvailability = Queryable.Where(session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
+                .Statistics(out var stats), availability => availability.BookId == bookId)
             .LazilyAsync();
 
         // Fetch Author using the Include method. This will result in a single round trip to server
@@ -46,7 +46,7 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
                 Author = author,
                 Availability = new { availability.Available, availability.Total }
             });
-        
+
         // Combine all inputs for the stats
         return req.TryCachePublicly(result, stats, session, author, book);
     }
@@ -55,23 +55,22 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     public async Task<IActionResult> AuthorsGetById([HttpTrigger("get", Route = "authors/{id}")] HttpRequest req, string id)
     {
         var authorId = Author.BuildId(id);
-        
+
         // Lazily fetch author's books. We use LazilyAsync to make it happen in one request to the database.
-        var lazyBooks = session.Query<Book, BooksByAuthor>()
-            .Statistics(out var stats)
-            .Where(book => book.AuthorId == authorId)
+        var lazyBooks = Queryable.Where(session.Query<Book, BooksByAuthor>()
+                .Statistics(out var stats), book => book.AuthorId == authorId)
             .LazilyAsync();
 
         var author = await session.LoadAsync<Author>(authorId);
         var books = await lazyBooks.Value;
-        
+
         if (author == null)
             return new NotFoundResult();
 
-        var result = new JsonResult(new 
+        var result = new JsonResult(new
         {
             author.Id, author.FirstName, author.LastName,
-            Books = books.Select(static book => new {book.Id, book.Title})
+            Books = books.Select(static book => new { book.Id, book.Title })
         });
 
         return req.TryCachePublicly(result, stats, session, author);
@@ -82,34 +81,55 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
     {
         var offset = req.GetQueryInt("offset", 0, 0, 10000);
         var query = req.GetQueryString("query");
+        var isVector = req.GetQueryString("vector") != null;
 
-        var queryable = session
-            .Query<GlobalSearchIndex.Result, GlobalSearchIndex>();
+        var nonEmptyQuery = !string.IsNullOrEmpty(query);
 
-        if (!string.IsNullOrEmpty(query))
+        (QueryStatistics stats, GlobalSearch.Result[] results) result;
+        if (isVector && nonEmptyQuery)
         {
-            queryable = queryable.Search(r => r.Query, query);
+            var queryable = session.Query<GlobalSearch.VectorIndex.VectorResult, GlobalSearch.VectorIndex>();
+            queryable = queryable.VectorSearch(
+                field => field.WithField(x => x.VectorFromDescription),
+                embedding => embedding.ByText(query));
+
+            result = await GetSearchResult(queryable, offset);
+        }
+        else
+        {
+            var queryable = session.Query<GlobalSearch.Result, GlobalSearch.FullTextIndex>();
+            if (nonEmptyQuery)
+            {
+                queryable = queryable.Search(r => r.Query, query);
+            }
+
+            result = await GetSearchResult(queryable, offset);
         }
 
-        var results = await queryable
-            .Statistics(out var stats) // Extract statistics to use it for caching
-            .ProjectInto<GlobalSearchIndex.Result>() // We need to inform Raven, what fields we want to project to. This does it for all the type properties
-            .Skip(offset)
-            .Take(10)
-            .ToArrayAsync();
+        return req.TryCachePublicly(new JsonResult(result.results), result.stats);
 
-        return req.TryCachePublicly(new JsonResult(results), stats);
+        static async Task<(QueryStatistics stats, GlobalSearch.Result[] results)> GetSearchResult<T>(IRavenQueryable<T> ravenQueryable, int skip)
+            where T : GlobalSearch.Result
+        {
+            var toArrayAsync = await ravenQueryable
+                .Statistics(out var queryStatistics) // Extract statistics to use it for caching
+                .ProjectInto<GlobalSearch.Result>() // We need to inform Raven, what fields we want to project to. This does it for all the type properties
+                .Skip(skip)
+                .Take(10)
+                .ToArrayAsync();
+
+            return (queryStatistics, toArrayAsync);
+        }
     }
-    
+
     [Function(nameof(HomeBooks))]
     public async Task<IActionResult> HomeBooks([HttpTrigger("get", Route = "home/books")] HttpRequest req)
     {
         const int count = 8;
-        
-        var books = await session.Query<Book>()
-            .Include(b => b.AuthorId) // Include the author so that further loads of authors do not issue requests to the server.
-            .Customize(customize => customize.RandomOrdering())
-            .Take(count)
+
+        var books = await Queryable.Take(session.Query<Book>()
+                .Include(b => b.AuthorId) // Include the author so that further loads of authors do not issue requests to the server.
+                .Customize(customize => customize.RandomOrdering()), count)
             .ToArrayAsync();
 
         var results = new List<object>(count);

@@ -9,7 +9,8 @@ public sealed class CreateIndexes : Migration
 {
     private static readonly IAbstractIndexCreationTask[] Indexes =
     {
-        new GlobalSearchIndex(),
+        new GlobalSearch.FullTextIndex(),
+        new GlobalSearch.VectorIndex(),
         new BooksByAuthor(),
         new BookCopyAvailabilityIndex()
     };

@@ -180,5 +180,4 @@ public sealed class ImportGoodBooks : Migration
 
         return (firstName, lastName);
     }
-
 }
