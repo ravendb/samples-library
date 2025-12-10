@@ -61,6 +61,28 @@ describe('book service', () => {
 			expect(result.availability?.total).toBe(5);
 		});
 
+		it('should handle books with description', async () => {
+			const mockResponse = {
+				id: 'Books/1',
+				title: 'Test Book',
+				description: 'This is a test book description with a lot of words.',
+				author: {
+					id: 'Authors/1',
+					firstName: 'John',
+					lastName: 'Doe'
+				}
+			};
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockResponse
+			});
+
+			const result = await getBookById('1');
+
+			expect(result.description).toBe('This is a test book description with a lot of words.');
+		});
+
 		it('should handle books without availability', async () => {
 			const mockResponse = {
 				id: 'Books/2',
@@ -80,6 +102,27 @@ describe('book service', () => {
 			const result = await getBookById('2');
 
 			expect(result.availability).toBeUndefined();
+		});
+
+		it('should handle books without description', async () => {
+			const mockResponse = {
+				id: 'Books/3',
+				title: 'Book Without Description',
+				author: {
+					id: 'Authors/3',
+					firstName: 'Bob',
+					lastName: 'Brown'
+				}
+			};
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockResponse
+			});
+
+			const result = await getBookById('3');
+
+			expect(result.description).toBeUndefined();
 		});
 
 		it('should throw error on non-ok response', async () => {
