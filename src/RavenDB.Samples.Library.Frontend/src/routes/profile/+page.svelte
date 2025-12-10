@@ -108,7 +108,7 @@
 			<p class="card card-centered error-state">{error}</p>
 		</section>
 	{:else if userProfile}
-			{#if overdueBooks.length > 0}
+		{#if overdueBooks.length > 0}
 			<section class="borrowed-section">
 				<h2 class="heading-section overdue-heading">Overdue Books</h2>
 				<ul class="card borrowed-list">

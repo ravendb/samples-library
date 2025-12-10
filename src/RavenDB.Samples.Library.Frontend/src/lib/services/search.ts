@@ -44,7 +44,10 @@ function transformApiResult(result: ApiSearchResult): SearchResult {
 	};
 }
 
-export async function searchBooksAndAuthors(query: string): Promise<SearchResult[]> {
+export async function searchBooksAndAuthors(
+	query: string,
+	useVector = false
+): Promise<SearchResult[]> {
 	if (!query.trim()) {
 		return [];
 	}
@@ -52,6 +55,10 @@ export async function searchBooksAndAuthors(query: string): Promise<SearchResult
 	const params = new URLSearchParams({
 		query: query
 	});
+
+	if (useVector) {
+		params.append('vector', 'true');
+	}
 
 	const apiResults = await callApi<ApiSearchResult[]>(`/search?${params.toString()}`);
 
