@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="..\..\goodbooks\books.csv" Label="books.csv"/>
+        <EmbeddedResource Include="..\..\goodbooks-10k-extended\books_enriched.csv" Label="books_enriched.csv"/>
     </ItemGroup>
 
 </Project>

@@ -19,10 +19,8 @@ public sealed class ImportGoodBooks : Migration
     public override void Up()
     {
         var asm = typeof(ImportGoodBooks).Assembly;
-        var name = asm.GetManifestResourceNames().Single(name => name.Contains("books.csv"));
+        var name = asm.GetManifestResourceNames().Single(name => name.Contains("books_enriched.csv"));
         using var stream = asm.GetManifestResourceStream(name);
-
-        var booksCsvPath = Path.Combine(AppContext.BaseDirectory, "Data", "books.csv");
 
         var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -59,6 +57,7 @@ public sealed class ImportGoodBooks : Migration
         {
             var goodreadsBookId = csv.GetField<long>("goodreads_book_id");
             var workId = csv.GetField<long>("work_id");
+            var description = csv.GetField<string>("description");
             var isbn = csv.GetField("isbn");
             var authorsRaw = csv.GetField("authors");
             var title = csv.GetField("title");
@@ -75,7 +74,8 @@ public sealed class ImportGoodBooks : Migration
             {
                 Id = $"{collections.books}/{workId}",
                 Title = bookTitle,
-                AuthorId = author.Id
+                AuthorId = author.Id,
+                Description = description,
             };
         
             bulkInsert.Store(book);
@@ -156,9 +156,9 @@ public sealed class ImportGoodBooks : Migration
         }
 
         var authors = authorsRaw
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            .Split([',', '[', ']', '\''], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        return authors.Length == 0 ? "Unknown Author" : authors[0];
+        return authors.Length == 0 ? "Unknown Author" : authors[0].Replace("[", "").Replace("]", "").Trim();
     }
 
     private static (string FirstName, string LastName) SplitAuthorName(string fullName)
