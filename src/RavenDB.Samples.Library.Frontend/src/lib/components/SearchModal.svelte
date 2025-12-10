@@ -9,6 +9,7 @@
 	let loading = $state(false);
 	let inputRef: HTMLInputElement | undefined = $state();
 	let selectedIndex = $state(-1);
+	let useVectorSearch = $state(false);
 
 	let debounceTimer: ReturnType<typeof setTimeout>;
 
@@ -17,7 +18,7 @@
 		debounceTimer = setTimeout(async () => {
 			if (query.trim()) {
 				loading = true;
-				results = await searchBooksAndAuthors(query);
+				results = await searchBooksAndAuthors(query, useVectorSearch);
 				loading = false;
 				selectedIndex = -1; // Reset selection when results change
 			} else {
@@ -103,6 +104,19 @@
 					<kbd class="kbd">↵</kbd>
 					<kbd class="kbd">ESC</kbd>
 				</div>
+			</div>
+
+			<div class="search-options">
+				<label class="checkbox-label" for="vector-search-checkbox">
+					<input
+						type="checkbox"
+						id="vector-search-checkbox"
+						bind:checked={useVectorSearch}
+						on:input={handleInput}
+						class="vector-checkbox"
+					/>
+					<span class="checkbox-text">Use vector search</span>
+				</label>
 			</div>
 
 			<div class="search-results">
@@ -196,6 +210,31 @@
 	.kbd-hints {
 		display: flex;
 		gap: var(--spacing-2);
+	}
+
+	.search-options {
+		display: flex;
+		align-items: center;
+		padding: var(--spacing-3) var(--spacing-4);
+		border-bottom: 1px solid var(--color-gray-200);
+		background: var(--color-gray-50);
+	}
+
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		cursor: pointer;
+		font-size: var(--font-size-sm);
+		color: var(--color-gray-700);
+	}
+
+	.vector-checkbox {
+		cursor: pointer;
+	}
+
+	.checkbox-text {
+		user-select: none;
 	}
 
 	.search-results {
