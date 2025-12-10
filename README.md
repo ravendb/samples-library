@@ -6,7 +6,7 @@
 
 A simple library management application. Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev) and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
 
-<img width="950" height="590" alt="screenshot" src="https://github.com/user-attachments/assets/108cbb63-e937-4b40-9cb0-28123fc93125" />
+<img width="2019" height="1606" alt="image" src="https://github.com/user-attachments/assets/13e86383-c7f6-4e0e-bb55-2966d51dea9e" />
 
 ## Features used
 
