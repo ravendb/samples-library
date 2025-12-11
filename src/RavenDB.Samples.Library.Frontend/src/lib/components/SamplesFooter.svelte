@@ -23,7 +23,12 @@
 		<div class="resources">
 			<span class="resources-label">Resources</span>
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a class="badge-link" href="https://docs.ravendb.net" target="_blank" rel="noopener noreferrer">
+			<a
+				class="badge-link"
+				href="https://docs.ravendb.net"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="12"
@@ -63,7 +68,12 @@
 				Community
 			</a>
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a class="badge-link" href="https://demo.ravendb.net" target="_blank" rel="noopener noreferrer">
+			<a
+				class="badge-link"
+				href="https://demo.ravendb.net"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="12"
@@ -89,8 +99,9 @@
 	<div class="powered-by">
 		<div class="powered-text">
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			Powered by <a href="https://ravendb.net" class="ravendb-link" target="_blank"
-				rel="noopener noreferrer">RavenDB</a
+			Powered by
+			<a href="https://ravendb.net" class="ravendb-link" target="_blank" rel="noopener noreferrer"
+				>RavenDB</a
 			>
 		</div>
 		{#if isMobile}
