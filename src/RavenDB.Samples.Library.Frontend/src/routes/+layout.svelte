@@ -4,7 +4,10 @@
 	import fav32 from '$lib/assets/favicon-32x32.png';
 	import favApple from '$lib/assets/apple-touch-icon.png';
 	import manifest from '$lib/assets/site.webmanifest';
+	import SamplesHeader from '$lib/components/SamplesHeader.svelte';
 	import TopBar from '$lib/components/TopBar.svelte';
+	import SamplesFooter from '$lib/components/SamplesFooter.svelte';
+	import WelcomeToast from '$lib/components/WelcomeToast.svelte';
 
 	let { children } = $props();
 </script>
@@ -16,10 +19,15 @@
 	<link rel="manifest" href={manifest} />
 </svelte:head>
 
-<TopBar />
-<main>
-	{@render children()}
-</main>
+<div class="app-wrapper">
+	<SamplesHeader sourceLink="https://github.com/ravendb/samples-library" />
+	<TopBar />
+	<main>
+		{@render children()}
+	</main>
+	<SamplesFooter />
+	<WelcomeToast />
+</div>
 
 <style>
 	:global(*) {
@@ -37,7 +45,15 @@
 		line-height: 1.5;
 	}
 
+	.app-wrapper {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
 	main {
-		min-height: calc(100vh - 61px);
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 	}
 </style>
