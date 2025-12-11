@@ -38,6 +38,33 @@
 	--font-size-lg: 20px;
 	--font-size-xl: 24px;
 	--font-size-2xl: 28px;
+
+	/* Samples UI Wrapper Theme (Light) */
+	--samples-primary: #388ee9;
+	--samples-bg: #f9f9f9;
+	--samples-text: #7f7d99;
+	--samples-toast-text: #2b2e45;
+	--samples-toast-link: #3c3f57;
+	--samples-border: #d7d7d7;
+	--samples-badge-border: #dbd8e6;
+	--samples-badge-bg: #ffffff;
+	--samples-hover-brightness: 90%;
+	--samples-icon-color: var(--samples-primary);
+}
+
+/* Dark mode support for samples wrapper */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--samples-bg: #1f2236;
+		--samples-text: #dbd8e6;
+		--samples-toast-text: #c8c5d6;
+		--samples-toast-link: var(--samples-text);
+		--samples-border: #595a75;
+		--samples-badge-border: #595a75;
+		--samples-badge-bg: #3c3f57;
+		--samples-hover-brightness: 115%;
+		--samples-icon-color: var(--samples-text);
+	}
 }
 
 /* Common Page Container */
