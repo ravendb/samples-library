@@ -23,8 +23,9 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var bookId = Book.BuildId(id);
 
         // Use a query against the map-reduce index
-        var lazyAvailability = Queryable.Where(session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
-                .Statistics(out var stats), availability => availability.BookId == bookId)
+        var lazyAvailability = session.Query<BookCopyAvailabilityIndex.Result, BookCopyAvailabilityIndex>()
+            .Statistics(out var stats)
+            .Where(availability => availability.BookId == bookId)
             .LazilyAsync();
 
         // Fetch Author using the Include method. This will result in a single round trip to server
@@ -57,8 +58,9 @@ public class Api(ILogger<Api> logger, IAsyncDocumentSession session, IConfigurat
         var authorId = Author.BuildId(id);
 
         // Lazily fetch author's books. We use LazilyAsync to make it happen in one request to the database.
-        var lazyBooks = Queryable.Where(session.Query<Book, BooksByAuthor>()
-                .Statistics(out var stats), book => book.AuthorId == authorId)
+        var lazyBooks = session.Query<Book, BooksByAuthor>()
+            .Statistics(out var stats)
+            .Where(book => book.AuthorId == authorId)
             .LazilyAsync();
 
         var author = await session.LoadAsync<Author>(authorId);

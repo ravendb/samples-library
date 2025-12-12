@@ -59,7 +59,7 @@ public sealed class ConfigureAzureQueueETL(MigrationContext context) : Migration
                     Collections = { BorrowedBook.CollectionName },
                     Script = @"
                         var metadata = this['@metadata'];
-                        if (metadata['@refresh'] == null) {
+                        if (metadata['@refresh'] == null && !this.ReturnedOn) {
                             // No refresh, for a borrowed book it means a potential timeout.
                             // Send the document ID to the queue
                             // Note: The ETL function name follows the pattern 'loadTo{QueueName}'
