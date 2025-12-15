@@ -1,6 +1,6 @@
 # The Library of Ravens
 
-![Build](https://github.com/ravendb/sample-blueprint/actions/workflows/build.yml/badge.svg)
+[![Build](https://github.com/ravendb/samples-library/actions/workflows/build.yml/badge.svg)](https://github.com/ravendb/samples-library/actions/workflows/build.yml)
 
 ## Overview
 
