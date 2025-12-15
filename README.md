@@ -1,10 +1,10 @@
 # The Library of Ravens
 
-![Build](https://github.com/ravendb/sample-blueprint/actions/workflows/build.yml/badge.svg)
+[![Build](https://github.com/ravendb/samples-library/actions/workflows/build.yml/badge.svg)](https://github.com/ravendb/samples-library/actions/workflows/build.yml)
 
 ## Overview
 
-A simple library management application. Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev) and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
+A simple library management application. Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev), [Azure Storage Queues](azure.microsoft.com/en-us/products/storage/queues), and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
 
 <img width="2019" height="1606" alt="image" src="https://github.com/user-attachments/assets/13e86383-c7f6-4e0e-bb55-2966d51dea9e" />
 
