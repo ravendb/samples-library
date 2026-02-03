@@ -35,8 +35,8 @@ var connection = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;Acc
 builder.Services.AddSingleton(new MigrationContext(connection));
 
 builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights()
+    .AddOpenTelemetry().WithLogging();
+builder.Services
     .AddRavenDbMigrations(migrations =>
     {
         migrations.Assemblies = [typeof(ImportGoodBooks).Assembly];

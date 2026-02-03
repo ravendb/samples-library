@@ -3,14 +3,14 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting" Version="13.0.2" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.0.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Functions" Version="13.0.2-preview.1.25603.5" />
+    <PackageVersion Include="Aspire.Hosting" Version="13.1.0" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.1.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Functions" Version="13.1.0" />
     <PackageVersion Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.RavenDB" Version="13.0.1-beta.468" />
-    <PackageVersion Include="CommunityToolkit.Aspire.RavenDB.Client" Version="13.0.1-beta.468" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.RavenDB" Version="13.1.2-beta.515" />
+    <PackageVersion Include="CommunityToolkit.Aspire.RavenDB.Client" Version="13.1.2-beta.515" />
     <PackageVersion Include="CsvHelper" Version="33.1.0" />
-    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.0.0-beta1" />
+    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.0.0-rc1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.50.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.0" />
