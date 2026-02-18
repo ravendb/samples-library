@@ -22,7 +22,7 @@ settings.TcpPort = 41350;
 
 var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
-    .WithImage("ravendb/ravendb", "7.1-latest")
+    .WithImage("ravendb/ravendb", "7.2-latest")
     .WithIconName("Database")
     .WithReference(queues)
     .WaitFor(queues);
