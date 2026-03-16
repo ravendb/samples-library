@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { playwright } from '@vitest/browser-playwright';
 
 export default defineConfig(({ mode }) => {
 	// load env, including VITE_PORT passed by Aspire
@@ -23,7 +24,7 @@ export default defineConfig(({ mode }) => {
 						name: 'client',
 						browser: {
 							enabled: true,
-							provider: 'playwright',
+							provider: playwright(),
 							instances: [{ browser: 'chromium' }]
 						},
 						include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
