@@ -17,9 +17,6 @@ if (license != null)
     settings.WithLicense(license);
 }
 
-settings.Port = 9534;
-settings.TcpPort = 41350;
-
 var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
     .WithImage("ravendb/ravendb", "7.2-latest")
