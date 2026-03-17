@@ -4,7 +4,13 @@
 
 ## Overview
 
-A simple library management application. Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev), [Azure Storage Queues](azure.microsoft.com/en-us/products/storage/queues), and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
+The Library of Ravens **solves the "architecture bloat"** of managing separate databases by **consolidating full-text and vector search into a single database**. Instead of wrestling with data synchronization across multiple platforms, you get a unified search experience that keeps your infrastructure lean and your development cycle fast.
+
+The app demonstrates **robust integration patterns using Azure Storage Queues**. By leveraging RavenDB’s change tracking and ETL services, the system ensures that critical library updates are never lost, providing architectural resilience.
+
+Finally, the app **addresses the "cloud tax" of high egress fees** by utilizing ETags and native HTTP caching driven by RavenDB’s metadata. This approach significantly reduces the volume of data sent over the wire, slashing public cloud billing while providing a snappier, more responsive experience for the end user through efficient data reuse.
+
+Built with [RavenDB](https://ravendb.net), [Aspire](https://aspire.dev), [Azure Storage Queues](azure.microsoft.com/en-us/products/storage/queues), and [Azure Functions](https://azure.microsoft.com/en-us/products/functions).
 
 <img width="2019" height="1606" alt="image" src="https://github.com/user-attachments/assets/13e86383-c7f6-4e0e-bb55-2966d51dea9e" />
 
