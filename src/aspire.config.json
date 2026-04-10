@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "RavenDB.Samples.Library.AppHost/RavenDB.Samples.Library.AppHost.csproj"
+  }
+}
