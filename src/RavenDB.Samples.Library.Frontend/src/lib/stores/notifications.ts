@@ -29,9 +29,6 @@ export function startNotificationPolling(intervalMs: number = 60000): void {
 	// Stop any existing polling
 	stopNotificationPolling();
 
-	// Initial fetch
-	updateNotificationCount();
-
 	// Set up periodic polling
 	pollInterval = setInterval(updateNotificationCount, intervalMs);
 }

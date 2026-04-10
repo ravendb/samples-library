@@ -48,11 +48,9 @@
 		unsubscribe();
 	});
 
-	// Update notification count on page navigation
+	// Update notification count on initial load and page navigation
 	$effect(() => {
-		// Access the page store to trigger on navigation
 		void $page;
-		// Update notification count when navigating between pages
 		void updateNotificationCount();
 	});
 

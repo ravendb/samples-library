@@ -19,8 +19,6 @@
 		try {
 			error = null;
 			notifications = await getNotifications();
-			// Update the notification count as well
-			await updateNotificationCount();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to load notifications';
 		} finally {
