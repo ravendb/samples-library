@@ -1,4 +1,5 @@
 using CommunityToolkit.Aspire.Hosting.RavenDB;
+using RavenDB.Samples.Library.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -8,14 +9,12 @@ var queues = storage.AddQueues("queues");
 
 // RavenDB
 // https://learn.microsoft.com/en-us/dotnet/aspire/community-toolkit/ravendb?tabs=dotnet-cli#hosting-integration
-var license = Environment.GetEnvironmentVariable("RAVEN_LICENSE");
+
+var ravenDbLicense = builder
+    .AddParameter("ravendb-license", secret: true)
+    .WithDescription("Your Developer license formatted as JSON.");
 
 var settings = RavenDBServerSettings.Unsecured();
-if (license != null)
-{
-    // Use the license from the environmental variable
-    settings.WithLicense(license);
-}
 
 settings.Port = 9534;
 settings.TcpPort = 41350;
@@ -24,6 +23,8 @@ var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
     .WithImage("ravendb/ravendb", "7.2-latest")
     .WithIconName("Database")
+    .WithEnvironment("RAVEN_License_Eula_Accepted", "true")
+    .WithEnvironment("RAVEN_License", ravenDbLicense)
     .WithReference(queues)
     .WaitFor(queues);
 
@@ -34,7 +35,7 @@ var db = ravenDbServer
 
 const string commandKey = "CommandKey";
 
-var secretKey = builder.AddParameter(commandKey, secret: true);
+var secretKey = builder.AddParameterWithRandomValue(commandKey, secret: true);
 
 // Library App
 var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
