@@ -4,7 +4,7 @@ using Raven.Client.Documents.Operations.ETL.Queue;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
 
-namespace RavenDB.Samples.Library.Setup.Migrations;
+namespace RavenDB.Samples.Library.Seeder.Migrations;
 
 [Migration(4)]
 public sealed class ConfigureAzureQueueETL(MigrationContext context) : Migration

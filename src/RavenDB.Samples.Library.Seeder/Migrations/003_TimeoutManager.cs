@@ -3,7 +3,7 @@ using Raven.Client.Documents.Operations.Refresh;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model.Indexes;
 
-namespace RavenDB.Samples.Library.Setup.Migrations;
+namespace RavenDB.Samples.Library.Seeder.Migrations;
 
 [Migration(3)]
 public sealed class TimeoutManagerMigration : Migration

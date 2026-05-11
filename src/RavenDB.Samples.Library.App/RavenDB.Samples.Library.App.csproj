@@ -12,7 +12,6 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="CommunityToolkit.Aspire.RavenDB.Client" />
-        <PackageReference Include="RavenMigrations" />
         <PackageReference Include="Microsoft.ApplicationInsights.WorkerService"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" />
@@ -23,7 +22,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj" />
-      <ProjectReference Include="..\RavenDB.Samples.Library.Setup\RavenDB.Samples.Library.Setup.csproj" />
     </ItemGroup>
 
 </Project>

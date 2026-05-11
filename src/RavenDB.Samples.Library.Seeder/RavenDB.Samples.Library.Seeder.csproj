@@ -1,12 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>RavenDB.Samples.Library.Seeder</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Aspire.RavenDB.Client" />
         <PackageReference Include="CsvHelper" />
         <PackageReference Include="RavenDB.Client" />
         <PackageReference Include="RavenMigrations" />
@@ -14,6 +17,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj" />
+        <ProjectReference Include="..\RavenDB.Samples.Library.ServiceDefaults\RavenDB.Samples.Library.ServiceDefaults.csproj" />
     </ItemGroup>
 
     <ItemGroup>

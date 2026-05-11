@@ -2,7 +2,7 @@ using Raven.Client.Documents.Indexes;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model.Indexes;
 
-namespace RavenDB.Samples.Library.Setup.Migrations;
+namespace RavenDB.Samples.Library.Seeder.Migrations;
 
 [Migration(2)]
 public sealed class CreateIndexes : Migration

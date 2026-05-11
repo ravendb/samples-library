@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.App
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Model", "RavenDB.Samples.Library.Model\RavenDB.Samples.Library.Model.csproj", "{14135ACF-F87E-4282-9F06-674C62EF18E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Setup", "RavenDB.Samples.Library.Setup\RavenDB.Samples.Library.Setup.csproj", "{AAC87B5A-AF1E-4229-937E-8F9AA4178871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavenDB.Samples.Library.Seeder", "RavenDB.Samples.Library.Seeder\RavenDB.Samples.Library.Seeder.csproj", "{AAC87B5A-AF1E-4229-937E-8F9AA4178871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

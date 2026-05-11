@@ -1,4 +1,4 @@
-﻿namespace RavenDB.Samples.Library.Setup.Migrations;
+﻿namespace RavenDB.Samples.Library.Seeder.Migrations;
 
 /// <summary>
 /// The context passed for the migrations.

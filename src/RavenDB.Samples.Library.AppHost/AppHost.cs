@@ -33,39 +33,27 @@ const string dbName = "library";
 var db = ravenDbServer
     .AddDatabase(dbName);
 
-const string commandKey = "CommandKey";
-
-var secretKey = builder.AddParameterWithRandomValue(commandKey, secret: true);
+// Seeder — runs migrations once, then exits 0; backend waits for completion
+var seeder = builder.AddProject<Projects.RavenDB_Samples_Library_Seeder>("seeder")
+    .WithReference(queues)
+    .WaitFor(queues)
+    .WithReference(db)
+    .WaitFor(db);
 
 // Library App
 var functions = builder.AddAzureFunctionsProject<Projects.RavenDB_Samples_Library_App>("app")
     .WithHostStorage(storage)
-    
+
     .WithReference(queues)
     .WaitFor(queues)
-    
-    // Required to go separately with as the bindings are not wired with the host storage
+
+    // Required to go separately as the bindings are not wired with the host storage
     .WithEnvironment("BindingConnection", queues.Resource.ConnectionStringExpression)
-    
+
     .WithReference(db)
     .WaitFor(db)
-    
-    .WithEnvironment(commandKey, secretKey)
-    .WithHttpCommand(
-        path: "/api/migrate",
-        displayName: "Migrate DB",
 
-        commandOptions: new HttpCommandOptions
-        {
-            Description = "Runs database migrations",
-            PrepareRequest = async context =>
-            {
-                var key = await secretKey.Resource.GetValueAsync(context.CancellationToken);
-                context.Request.Headers.Add("X-Command-Key", key);
-            },
-            IconName = "databaseArrowUp",
-            IsHighlighted = true
-        });
+    .WaitForCompletion(seeder);
 
 // Frontend
 var frontend = builder.AddNpmApp("Frontend", "../RavenDB.Samples.Library.Frontend", "dev")

@@ -11,7 +11,7 @@ using Raven.Client.Documents.Queries;
 using Raven.Migrations;
 using RavenDB.Samples.Library.Model;
 
-namespace RavenDB.Samples.Library.Setup.Migrations;
+namespace RavenDB.Samples.Library.Seeder.Migrations;
 
 [Migration(1)]
 public sealed class ImportGoodBooks : Migration
