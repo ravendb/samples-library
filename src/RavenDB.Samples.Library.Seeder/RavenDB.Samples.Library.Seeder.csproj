@@ -24,4 +24,9 @@
         <EmbeddedResource Include="..\..\goodbooks-10k-extended\books_enriched.csv" Label="books_enriched.csv"/>
     </ItemGroup>
 
+    <Target Name="RestoreSubmodules" BeforeTargets="CoreCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+        <Exec Command="git submodule update --init --recursive"
+              WorkingDirectory="$(MSBuildThisFileDirectory)..\.." />
+    </Target>
+
 </Project>
