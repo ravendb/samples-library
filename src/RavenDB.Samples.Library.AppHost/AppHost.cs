@@ -16,8 +16,8 @@ var ravenDbLicense = builder
 
 var settings = RavenDBServerSettings.Unsecured();
 
-settings.Port = 9534;
-settings.TcpPort = 41350;
+settings.Port = 9536;
+settings.TcpPort = 41352;
 
 var ravenDbServer = builder
     .AddRavenDB("RavenDB", settings)
